@@ -53,10 +53,20 @@ else ()
   message(FATAL_ERROR "Unable to find CMOR library!")
 endif ()
 
+add_subdirectory(lib/container)
+add_subdirectory(lib/fiona)
+add_subdirectory(lib/flogger)
+add_subdirectory(lib/datetime)
+
 set(source_files
+  src/const_mod.F90
+  src/namelist_mod.F90
+  src/calc_gamil_lat_bnds.F90
+  src/interp_mod.F90
+  src/gamil_reader_mod.F90
   src/cmor_fgoals_g_mod.F90
   src/convert_fgoals_g.F90
 )
 
 add_executable(convert_fgoals_g.exe ${source_files})
-target_link_libraries(convert_fgoals_g.exe netcdf netcdff udunits2 uuid cmor)
+target_link_libraries(convert_fgoals_g.exe fortran_datetime flogger fiona netcdf netcdff udunits2 uuid cmor)

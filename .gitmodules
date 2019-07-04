@@ -4,3 +4,15 @@
 [submodule "cv/cmip6"]
 	path = cv/cmip6
 	url = https://github.com/WCRP-CMIP/CMIP6_CVs
+[submodule "lib/fiona"]
+	path = lib/fiona
+	url = https://github.com/dongli/fiona
+[submodule "lib/container"]
+	path = lib/container
+	url = https://github.com/dongli/fortran-container
+[submodule "lib/flogger"]
+	path = lib/flogger
+	url = https://github.com/dongli/flogger
+[submodule "lib/datetime"]
+	path = lib/datetime
+	url = https://github.com/dongli/fortran-datetime

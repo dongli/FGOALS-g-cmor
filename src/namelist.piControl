@@ -1,0 +1,7 @@
+&cmor_fgoals_g
+experiment_id = 'piControl'
+experiment_path = '/public1/wab/CMIP6/run/hybrid-97-c0/hybrid-97-c0/run'
+case_id = 'hybrid-97-c0'
+start_time = '0200'
+end_time = '0901'
+/
