@@ -2,6 +2,10 @@ cmake_minimum_required(VERSION 2.8)
 
 project(FGOALS-g-cmor LANGUAGES Fortran)
 
+if (CMAKE_Fortran_COMPILER_ID STREQUAL "GNU")
+  set(CMAKE_Fortran_FLAGS "${CMAKE_Fortran_FLAGS} -ffpe-summary=none -ffree-line-length-none")
+endif ()
+
 if (DEFINED ENV{NETCDF} AND (NOT DEFINED ENV{NETCDF_ROOT}))
   set(ENV{NETCDF_ROOT} $ENV{NETCDF})
 endif ()
@@ -53,6 +57,17 @@ else ()
   message(FATAL_ERROR "Unable to find CMOR library!")
 endif ()
 
+if (DEFINED ENV{JSON_FORTRAN} AND (NOT DEFINED ENV{JSON_FORTRAN_ROOT}))
+  set(ENV{JSON_FORTRAN_ROOT} $ENV{JSON_FORTRAN})
+endif ()
+if (DEFINED ENV{JSON_FORTRAN_ROOT})
+  include_directories("$ENV{JSON_FORTRAN_ROOT}/include")
+  link_directories("$ENV{JSON_FORTRAN_ROOT}/lib")
+  link_directories("$ENV{JSON_FORTRAN_ROOT}/lib64")
+else ()
+  message(FATAL_ERROR "Unable to find JSON_FORTRAN library!")
+endif ()
+
 add_subdirectory(lib/container)
 add_subdirectory(lib/fiona)
 add_subdirectory(lib/flogger)
@@ -69,4 +84,4 @@ set(source_files
 )
 
 add_executable(convert_fgoals_g.exe ${source_files})
-target_link_libraries(convert_fgoals_g.exe fortran_datetime flogger fiona netcdf netcdff udunits2 uuid cmor)
+target_link_libraries(convert_fgoals_g.exe fortran_datetime flogger fiona jsonfortran netcdf netcdff udunits2 uuid cmor)

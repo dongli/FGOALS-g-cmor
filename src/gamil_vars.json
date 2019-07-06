@@ -1,0 +1,25 @@
+{
+  "ps": {
+    "var_name": "PS",
+    "units": "Pa",
+    "is_var_2d": true
+  },
+  "ta": {
+    "var_name": "T",
+    "units": "K",
+    "vinterp": "log_linear"
+  },
+  "hus": {
+    "var_name": "Q",
+    "units": "kg kg-1",
+    "vinterp": "log_linear"
+  },
+  "ua": {
+    "var_name": "U",
+    "units": "m s-1"
+  },
+  "va": {
+    "var_name": "V",
+    "units": "m s-1"
+  }
+}

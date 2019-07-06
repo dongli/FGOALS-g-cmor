@@ -14,6 +14,17 @@ module gamil_reader_mod
   public gamil_reader_close
   public gamil_reader_final
 
+  public time_interval
+  public lon
+  public lon_bnds
+  public lat
+  public lat_bnds
+  public lev
+  public lev_bnds
+  public ptop
+
+  character(30), parameter :: time_interval = '10 minutes'
+
   integer num_lon
   integer num_lat
   integer num_lev
@@ -29,8 +40,14 @@ module gamil_reader_mod
     module procedure gamil_reader_get_var_att_s
   end interface gamil_reader_get_att
 
+  real(8), allocatable :: lon(:)
+  real(8), allocatable :: lon_bnds(:)
+  real(8), allocatable :: lat(:)
+  real(8), allocatable :: lat_bnds(:)
+  real(8), allocatable :: lev(:)
+  real(8), allocatable :: lev_bnds(:)
+
   real(8), parameter :: ptop = 219.4
-  real(8), allocatable :: sigma(:)
   real(8), allocatable :: p(:)
   real(8), allocatable :: ps(:,:)
   real(8), allocatable :: array_on_gamil_levels(:,:,:)
@@ -47,33 +64,22 @@ contains
     call io_get_dim('gamil', 'lev', size=num_lev)
     call io_start_input('gamil')
 
-    if (.not. allocated(sigma)) allocate(sigma(num_lev))
-    if (.not. allocated(p)) allocate(p(num_lev))
-    if (.not. allocated(ps)) allocate(ps(num_lon,num_lat))
+    if (.not. allocated(lon                  )) allocate(lon                  (num_lon                ))
+    if (.not. allocated(lon_bnds             )) allocate(lon_bnds             (num_lon+1              ))
+    if (.not. allocated(lat                  )) allocate(lat                  (        num_lat        ))
+    if (.not. allocated(lat_bnds             )) allocate(lat_bnds             (        num_lat+1      ))
+    if (.not. allocated(lev                  )) allocate(lev                  (                num_lev))
+    if (.not. allocated(lev_bnds             )) allocate(lev_bnds             (                num_lev+1))
+    if (.not. allocated(p                    )) allocate(p                    (                num_lev))
+    if (.not. allocated(ps                   )) allocate(ps                   (num_lon,num_lat        ))
     if (.not. allocated(array_on_gamil_levels)) allocate(array_on_gamil_levels(num_lon,num_lat,num_lev))
-
-    call io_input('gamil', 'lev', sigma)
 
   end subroutine gamil_reader_open
 
-  subroutine gamil_reader_get_grids(lon, lon_bnds, lat, lat_bnds, lev, lev_bnds)
-
-    real(8), intent(out), allocatable :: lon(:)
-    real(8), intent(out), allocatable :: lon_bnds(:)
-    real(8), intent(out), allocatable :: lat(:)
-    real(8), intent(out), allocatable :: lat_bnds(:)
-    real(8), intent(out), allocatable :: lev(:)
-    real(8), intent(out), allocatable :: lev_bnds(:)
+  subroutine gamil_reader_get_grids()
 
     real(8) dlon
     integer i
-
-    if (allocated(lon)) deallocate(lon); allocate(lon(num_lon))
-    if (allocated(lon_bnds)) deallocate(lon_bnds); allocate(lon_bnds(num_lon + 1))
-    if (allocated(lat)) deallocate(lat); allocate(lat(num_lat))
-    if (allocated(lat_bnds)) deallocate(lat_bnds); allocate(lat_bnds(num_lat + 1))
-    if (allocated(lev)) deallocate(lev); allocate(lev(num_lev))
-    if (allocated(lev_bnds)) deallocate(lev_bnds); allocate(lev_bnds(num_lev + 1))
 
     call io_input('gamil', 'lon', lon)
     call io_input('gamil', 'lat', lat)
@@ -134,7 +140,7 @@ contains
       call io_input('gamil', var_name, array_on_gamil_levels)
       do j = 1, num_lat
         do i = 1, num_lon
-          p = sigma * (ps(i,j) - ptop) + ptop
+          p = lev * (ps(i,j) - ptop) + ptop
           if (present(use_log_linear) .and. use_log_linear) then
             call interp_log_linear(p, array_on_gamil_levels(i,j,:), plev, array(i,j,:), allow_extrap=.false.)
           else
@@ -166,9 +172,14 @@ contains
 
   subroutine gamil_reader_final()
 
-    if (allocated(sigma)) deallocate(sigma)
-    if (allocated(p)) deallocate(p)
-    if (allocated(ps)) deallocate(ps)
+    if (allocated(lon                  )) deallocate(lon                  )
+    if (allocated(lon_bnds             )) deallocate(lon_bnds             )
+    if (allocated(lat                  )) deallocate(lat                  )
+    if (allocated(lat_bnds             )) deallocate(lat_bnds             )
+    if (allocated(lev                  )) deallocate(lev                  )
+    if (allocated(lev_bnds             )) deallocate(lev_bnds             )
+    if (allocated(p                    )) deallocate(p                    )
+    if (allocated(ps                   )) deallocate(ps                   )
     if (allocated(array_on_gamil_levels)) deallocate(array_on_gamil_levels)
 
   end subroutine gamil_reader_final
