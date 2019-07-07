@@ -58,7 +58,7 @@ contains
 
     character(*), intent(in) :: file_path
 
-    call io_create_dataset('gamil', file_path=file_path, mode='input')
+    call io_create_dataset('gamil', file_path=file_path, mode='input', mute=.true.)
     call io_get_dim('gamil', 'lon', size=num_lon)
     call io_get_dim('gamil', 'lat', size=num_lat)
     call io_get_dim('gamil', 'lev', size=num_lev)
@@ -121,9 +121,12 @@ contains
 
     call io_input('gamil', var_name, array)
 
-    if (var_name == 'PS') then
+    select case (var_name)
+    case ('PS')
       ps = array
-    end if
+    case ('PRECT', 'PRECC')
+      array = array * 1000
+    end select
 
   end subroutine gamil_reader_get_var_2d
 

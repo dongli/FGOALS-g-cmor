@@ -53,7 +53,7 @@
  
     "sub_experiment":         "none",
     "institution":            "",
-    "source":                 "FGOALS-g3",
+    "source":                 "FGOALS-g3 (2017): \naerosol: none\natmos: GAMIL3 (180 x 80 longitude/latitude; 26 levels; top level 2.194hPa)\natmosChem: none\nland: CLM4.0\nlandIce: none\nocean: LICOM3.0 (LICOM3.0, tripolar primarily 1deg; 360 x 218 longitude/latitude; 30 levels; top grid cell 0-10 m)\nocnBgchem: none\nseaIce: CICE4.0",
  
     "#note_CMIP6":            " **** The following are set correctly for CMIP6 and should not normally need editing",  
  

@@ -1,0 +1,156 @@
+{
+	"clt": {
+		"var_name": "CLDTOT",
+		"units": "1",
+		"is_var_2d": true
+	},
+	"hfls": {
+		"var_name": "LHFLX",
+		"units": "W m-2",
+		"is_var_2d": true
+	},
+	"hfss": {
+		"var_name": "SHFLX",
+		"units": "W m-2",
+		"is_var_2d": true
+	},
+	"hur": {
+		"var_name": "RELHUM",
+		"units": "%"
+	},
+	"hurs": {
+		"var_name": "RHREFHT",
+		"units": "%",
+		"is_var_2d": true
+	},
+	"hursmax": {
+		"var_name": "XXX",
+		"units": "%",
+		"is_var_2d": true
+	},
+	"hursmin": {
+		"var_name": "XXX",
+		"units": "%",
+		"is_var_2d": true
+	},
+	"hus": {
+		"var_name": "Q",
+		"units": "kg kg-1"
+	},
+	"huss": {
+		"var_name": "QREFHT",
+		"units": "kg kg-1",
+		"is_var_2d": true
+	},
+	"pr": {
+		"var_name": "PRECT",
+		"units": "m s-1",
+		"is_var_2d": true
+	},
+	"prc": {
+		"var_name": "PRECC",
+		"units": "m s-1",
+		"is_var_2d": true
+	},
+	"prsn": {
+		"var_name": "XXX",
+		"units": "m s-1",
+		"is_var_2d": true
+	},
+	"psl": {
+		"var_name": "PSL",
+		"units": "Pa",
+		"is_var_2d": true
+	},
+	"rlds": {
+		"var_name": "FLDS",
+		"units": "W m-2",
+		"is_var_2d": true
+	},
+	"rls": {
+		"var_name": "FLNS",
+		"units": "W m-2",
+		"is_var_2d": true
+	},
+	"rlus": {
+		"var_name": "FLUS",
+		"units": "W m-2",
+		"is_var_2d": true
+	},
+	"rlut": {
+		"var_name": "FLUTOA",
+		"units": "W m-2",
+		"is_var_2d": true
+	},
+	"rsds": {
+		"var_name": "FSDS",
+		"units": "W m-2",
+		"is_var_2d": true
+	},
+	"rss": {
+		"var_name": "FSNS",
+		"units": "W m-2",
+		"is_var_2d": true
+	},
+	"rsus": {
+		"var_name": "FSUS",
+		"units": "W m-2",
+		"is_var_2d": true
+	},
+	"sfcWind": {
+		"var_name": "WIND10M",
+		"units": "m s-1",
+		"is_var_2d": true
+	},
+	"sfcWindmax": {
+		"var_name": "XXX",
+		"units": "m s-1",
+		"is_var_2d": true
+	},
+  "ta": {
+    "var_name": "T",
+    "units": "K",
+    "vinterp": "log_linear"
+  },
+	"tas": {
+		"var_name": "TREFHT",
+		"units": "K",
+		"is_var_2d": true
+	},
+	"tasmax": {
+		"var_name": "TREFHTMX",
+		"units": "K",
+		"is_var_2d": true
+	},
+	"tasmin": {
+		"var_name": "TREFHTMN",
+		"units": "K",
+		"is_var_2d": true
+	},
+  "ua": {
+    "var_name": "U",
+    "units": "m s-1"
+  },
+	"uas": {
+		"var_name": "XXX",
+		"units": "m s-1",
+		"is_var_2d": true
+	},
+  "va": {
+    "var_name": "V",
+    "units": "m s-1"
+  },
+	"vas": {
+		"var_name": "XXX",
+		"units": "m s-1",
+		"is_var_2d": true
+	},
+	"wap": {
+		"var_name": "OMEGA",
+		"units": "Pa s-1"
+	},
+	"zg": {
+		"var_name": "Z3",
+		"units": "m"
+	}
+}
