@@ -25,7 +25,6 @@ module cmor_fgoals_g_mod
 
   type model_info_type
     character(50) :: time_units = 'N/A'
-    integer num_time
     integer table_id
     integer, allocatable, dimension(:) :: axis_ids
     integer, allocatable, dimension(:) :: axis_ids_2d
@@ -52,6 +51,7 @@ module cmor_fgoals_g_mod
 
   type(datetime_type) start_time
   type(datetime_type) end_time
+  integer num_time
   type(model_info_type) gamil
 
   real(8) :: cmor_plev(19) = [ &
@@ -78,7 +78,7 @@ contains
     end_time   = create_datetime(end_time_str  , '%Y', calendar=datetime_noleap_calendar)
 
     dt = end_time - start_time
-    gamil%num_time = dt%total_seconds() / 86400 / 365 * 12
+    num_time = dt%total_seconds() / 86400 / 365 * 12
 
     ! Get the first model data to inquire dimension information.
     call gamil_reader_open(trim(experiment_path) // '/' // trim(case_id) // '.gamil.h0.' // start_time%format('%Y-%m') // '.nc')
@@ -86,7 +86,7 @@ contains
     call gamil_reader_get_att('time', 'units', gamil%time_units)
     call gamil_reader_close()
 
-    call gamil%init('../src/gamil_vars.Amon.json')
+    call gamil%init('../src/gamil_vars.' // trim(frequency) // '.json')
 
   end subroutine cmor_fgoals_g_init
 
@@ -150,12 +150,10 @@ contains
       call log_notice('Convert variable ' // trim(gamil%cmor_var_names(ivar)) // ' ...')
       time = start_time
       last_year = time%year
-      do itime = 1, 24 ! gamil_num_time
+      do itime = 1, num_time
         call log_print(time%isoformat())
         ! Close previous file.
         if (time%year /= last_year) then
-          ! Redefine the CMOR objects.
-          ! call gamil%create_gamil_cmor_objects()
           ierr = cmor_close(gamil%var_ids(ivar), preserve=1)
           last_year = time%year
         end if

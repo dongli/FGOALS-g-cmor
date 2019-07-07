@@ -9,9 +9,7 @@ program convert_fgoals_g
 
   call get_command_argument(1, namelist_file_path)
 
-  open(10, file=namelist_file_path, status='old')
-  read(10, nml=cmor_fgoals_g)
-  close(10)
+  call namelist_parse(namelist_file_path)
 
   call cmor_fgoals_g_init()
 
