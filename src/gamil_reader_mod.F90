@@ -48,7 +48,8 @@ module gamil_reader_mod
   real(8), allocatable :: lev_bnds(:)
 
   real(8), parameter :: ptop = 219.4
-  real(8), allocatable :: p(:)
+  real(8), allocatable :: pfull(:)
+  real(8), allocatable :: phalf(:)
   real(8), allocatable :: ps(:,:)
   real(8), allocatable :: array_on_gamil_levels(:,:,:)
 
@@ -64,15 +65,16 @@ contains
     call io_get_dim('gamil', 'lev', size=num_lev)
     call io_start_input('gamil')
 
-    if (.not. allocated(lon                  )) allocate(lon                  (num_lon                ))
-    if (.not. allocated(lon_bnds             )) allocate(lon_bnds             (num_lon+1              ))
-    if (.not. allocated(lat                  )) allocate(lat                  (        num_lat        ))
-    if (.not. allocated(lat_bnds             )) allocate(lat_bnds             (        num_lat+1      ))
-    if (.not. allocated(lev                  )) allocate(lev                  (                num_lev))
+    if (.not. allocated(lon                  )) allocate(lon                  (num_lon                  ))
+    if (.not. allocated(lon_bnds             )) allocate(lon_bnds             (num_lon+1                ))
+    if (.not. allocated(lat                  )) allocate(lat                  (        num_lat          ))
+    if (.not. allocated(lat_bnds             )) allocate(lat_bnds             (        num_lat+1        ))
+    if (.not. allocated(lev                  )) allocate(lev                  (                num_lev  ))
     if (.not. allocated(lev_bnds             )) allocate(lev_bnds             (                num_lev+1))
-    if (.not. allocated(p                    )) allocate(p                    (                num_lev))
-    if (.not. allocated(ps                   )) allocate(ps                   (num_lon,num_lat        ))
-    if (.not. allocated(array_on_gamil_levels)) allocate(array_on_gamil_levels(num_lon,num_lat,num_lev))
+    if (.not. allocated(pfull                )) allocate(pfull                (                num_lev  ))
+    if (.not. allocated(phalf                )) allocate(phalf                (                num_lev+1))
+    if (.not. allocated(ps                   )) allocate(ps                   (num_lon,num_lat          ))
+    if (.not. allocated(array_on_gamil_levels)) allocate(array_on_gamil_levels(num_lon,num_lat,num_lev  ))
 
   end subroutine gamil_reader_open
 
@@ -96,63 +98,82 @@ contains
 
   end subroutine gamil_reader_get_grids
 
-  subroutine gamil_reader_get_var_0d(var_name, value)
+  subroutine gamil_reader_get_var_0d(var_name, value, time_step)
 
-    character(*), intent(in) :: var_name
-    real(8), intent(out) :: value
+    character(*), intent(in   ) :: var_name
+    real(8)     , intent(  out) :: value
+    integer     , intent(in   ) :: time_step
 
-    call io_input('gamil', var_name, value)
+    call io_input('gamil', var_name, value, time_step=time_step)
 
   end subroutine gamil_reader_get_var_0d
 
-  subroutine gamil_reader_get_var_1d(var_name, array)
+  subroutine gamil_reader_get_var_1d(var_name, array, time_step)
 
-    character(*), intent(in) :: var_name
-    real(8), intent(out) :: array(:)
+    character(*), intent(in   ) :: var_name
+    real(8)     , intent(  out) :: array(:)
+    integer     , intent(in   ) :: time_step
 
-    call io_input('gamil', var_name, array)
+    call io_input('gamil', var_name, array, time_step=time_step)
 
   end subroutine gamil_reader_get_var_1d
 
-  subroutine gamil_reader_get_var_2d(var_name, array)
+  subroutine gamil_reader_get_var_2d(var_name, array, time_step)
 
-    character(*), intent(in) :: var_name
-    real(8), intent(out) :: array(:,:)
+    character(*), intent(in   ) :: var_name
+    real(8)     , intent(  out) :: array(:,:)
+    integer     , intent(in   ) :: time_step
 
-    call io_input('gamil', var_name, array)
+    call io_input('gamil', var_name, array, time_step=time_step)
 
     select case (var_name)
-    case ('PS')
-      ps = array
     case ('PRECT', 'PRECC')
       array = array * 1000
     end select
 
   end subroutine gamil_reader_get_var_2d
 
-  subroutine gamil_reader_get_var_3d(var_name, array, plev, use_log_linear)
+  subroutine gamil_reader_get_var_3d(var_name, array, time_step, plev, use_log_linear)
 
-    character(*), intent(in) :: var_name
-    real(8), intent(out) :: array(:,:,:)
-    real(8), intent(in), optional :: plev(:)
-    logical, intent(in), optional :: use_log_linear
+    character(*), intent(in   )           :: var_name
+    real(8)     , intent(  out)           :: array(:,:,:)
+    integer     , intent(in   )           :: time_step
+    real(8)     , intent(in   ), optional :: plev(:)
+    logical     , intent(in   ), optional :: use_log_linear
 
     integer i, j
 
     if (present(plev)) then
-      call io_input('gamil', var_name, array_on_gamil_levels)
+      call io_input('gamil', 'PS', ps, time_step=time_step)
+      call io_input('gamil', var_name, array_on_gamil_levels, time_step=time_step)
       do j = 1, num_lat
         do i = 1, num_lon
-          p = lev * (ps(i,j) - ptop) + ptop
+          pfull = lev * (ps(i,j) - ptop) + ptop
           if (present(use_log_linear) .and. use_log_linear) then
-            call interp_log_linear(p, array_on_gamil_levels(i,j,:), plev, array(i,j,:), allow_extrap=.false.)
+            call interp_log_linear(pfull, array_on_gamil_levels(i,j,:), plev, array(i,j,:), allow_extrap=.false.)
           else
-            call interp_linear(p, array_on_gamil_levels(i,j,:), plev, array(i,j,:), allow_extrap=.false.)
+            call interp_linear(pfull, array_on_gamil_levels(i,j,:), plev, array(i,j,:), allow_extrap=.false.)
           end if
         end do
       end do
+    else if (var_name == '<pfull>') then
+      call io_input('gamil', 'PS', ps, time_step=time_step)
+      do j = 1, num_lat
+        do i = 1, num_lon
+          pfull = lev * (ps(i,j) - ptop) + ptop
+          array(i,j,:) = pfull
+        end do
+      end do
+    else if (var_name == '<phalf>') then
+      call io_input('gamil', 'PS', ps, time_step=time_step)
+      do j = 1, num_lat
+        do i = 1, num_lon
+          phalf = lev_bnds * (ps(i,j) - ptop) + ptop
+          array(i,j,:) = phalf
+        end do
+      end do
     else
-      call io_input('gamil', var_name, array)
+      call io_input('gamil', var_name, array, time_step=time_step)
     end if
 
   end subroutine gamil_reader_get_var_3d
@@ -181,7 +202,8 @@ contains
     if (allocated(lat_bnds             )) deallocate(lat_bnds             )
     if (allocated(lev                  )) deallocate(lev                  )
     if (allocated(lev_bnds             )) deallocate(lev_bnds             )
-    if (allocated(p                    )) deallocate(p                    )
+    if (allocated(pfull                )) deallocate(pfull                )
+    if (allocated(phalf                )) deallocate(phalf                )
     if (allocated(ps                   )) deallocate(ps                   )
     if (allocated(array_on_gamil_levels)) deallocate(array_on_gamil_levels)
 

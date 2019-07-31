@@ -1,64 +1,52 @@
 {
   "ccb": {
     "var_name": "XXX",
-    "units": "Pa",
-    "is_var_2d": true
+    "units": "Pa"
   },
   "cct": {
     "var_name": "XXX",
-    "units": "Pa",
-    "is_var_2d": true
+    "units": "Pa"
   },
   "ci": {
     "var_name": "XXX",
-    "units": "1",
-    "is_var_2d": true
+    "units": "1"
   },
   "cl": {
     "var_name": "CLOUD",
-    "units": "1",
-    "is_model_full_levels": true
+    "units": "1"
   },
   "cli": {
     "var_name": "CLDICE",
-    "units": "kg kg-1",
-    "is_model_full_levels": true
+    "units": "kg kg-1"
   },
   "clivi": {
     "var_name": "XXX",
-    "units": "kg kg-1",
-    "is_var_2d": true
+    "units": "kg kg-1"
   },
   "clt": {
     "var_name": "CLDTOT",
-    "units": "1",
-    "is_var_2d": true
+    "units": "1"
   },
   "clw": {
     "var_name": "CLDLIQ",
-    "units": "kg kg-1",
-    "is_model_full_levels": true
+    "units": "kg kg-1"
   },
   "clwvi": {
     "var_name": "XXX",
-    "units": "1",
-    "is_var_2d": true
+    "units": "1"
   },
   "evspsbl": {
     "var_name": "QFLX",
-    "units": "kg m-2 s-1",
-    "is_var_2d": true
+    "units": "kg m-2 s-1"
   },
   "hfls": {
     "var_name": "LHFLX",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "up"
   },
   "hfss": {
     "var_name": "SHFLX",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "up"
   },
   "hur": {
@@ -67,8 +55,7 @@
   },
   "hurs": {
     "var_name": "XXX",
-    "units": "%",
-    "is_var_2d": true
+    "units": "%"
   },
   "hus": {
     "var_name": "Q",
@@ -76,38 +63,36 @@
   },
   "huss": {
     "var_name": "QREFHT",
-    "units": "kg kg-1",
-    "is_var_2d": true
+    "units": "kg kg-1"
   },
   "mc": {
     "var_name": "CMFMC",
     "units": "kg m-2 s-1",
-    "is_model_half_levels": true,
     "positive": "up"
   },
   "o3": {
     "var_name": "O3VMR",
     "units": "m3 m-3"
   },
+  "ps": {
+    "var_name": "PS",
+    "units": "Pa"
+  },
   "pfull": {
-    "var_name": "XXX",
-    "units": "Pa",
-    "is_model_full_levels": true
+    "var_name": "<pfull>",
+    "units": "Pa"
   },
   "phalf": {
-    "var_name": "XXX",
-    "units": "Pa",
-    "is_model_half_levels": true
+    "var_name": "<phalf>",
+    "units": "Pa"
   },
   "pr": {
     "var_name": "PRECT",
-    "units": "kg m-2 s-1",
-    "is_var_2d": true
+    "units": "kg m-2 s-1"
   },
   "prc": {
     "var_name": "PRECC",
-    "units": "kg m-2 s-1",
-    "is_var_2d": true
+    "units": "kg m-2 s-1"
   },
   "prsn": {
     "var_name": "XXX",
@@ -116,106 +101,84 @@
   },
   "prw": {
     "var_name": "TGCLDLWP",
-    "units": "kg m-2",
-    "is_var_2d": true
-  },
-  "ps": {
-    "var_name": "PS",
-    "units": "Pa",
-    "is_var_2d": true
+    "units": "kg m-2"
   },
   "psl": {
     "var_name": "PSL",
-    "units": "Pa",
-    "is_var_2d": true
+    "units": "Pa"
   },
   "rlds": {
     "var_name": "FLDS",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "down"
   },
   "rldscs": {
     "var_name": "FLDSC",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "down"
   },
   "rlus": {
     "var_name": "FLUS",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "up"
   },
   "rlut": {
     "var_name": "FLUTOA",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "up"
   },
   "rlutcs": {
     "var_name": "FLUTOAC",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "up"
   },
   "rsds": {
     "var_name": "FSDS",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "down"
   },
   "rsdscs": {
     "var_name": "FSDSC",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "down"
   },
   "rsdt": {
     "var_name": "FSDTOA",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "down"
   },
   "rsus": {
     "var_name": "FSUS",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "up"
   },
   "rsuscs": {
     "var_name": "FSUSC",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "up"
   },
   "rsut": {
     "var_name": "FSUTOA",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "up"
   },
   "rsutcs": {
     "var_name": "FSUTOAC",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "up"
   },
   "rtmt": {
     "var_name": "FSNTOA",
     "units": "W m-2",
-    "is_var_2d": true,
     "positive": "up"
   },
   "sci": {
     "var_name": "XXX",
-    "units": "1",
-    "is_var_2d": true
+    "units": "1"
   },
   "sfcWind": {
     "var_name": "XXX",
-    "units": "m s-1",
-    "is_var_2d": true
+    "units": "m s-1"
   },
   "ta": {
     "var_name": "T",
@@ -224,35 +187,29 @@
   },
   "tas": {
     "var_name": "TREFHT",
-    "units": "K",
-    "is_var_2d": true
+    "units": "K"
   },
   "tasmax": {
     "var_name": "XXX",
-    "units": "K",
-    "is_var_2d": true
+    "units": "K"
   },
   "tasmin": {
     "var_name": "XXX",
-    "units": "K",
-    "is_var_2d": true
+    "units": "K"
   },
   "tauu": {
     "var_name": "TAUX",
     "units": "Pa",
-    "is_var_2d": true,
     "positive": "down"
   },
   "tauv": {
     "var_name": "TAUY",
     "units": "Pa",
-    "is_var_2d": true,
     "positive": "down"
   },
   "ts": {
     "var_name": "TS",
-    "units": "K",
-    "is_var_2d": true
+    "units": "K"
   },
   "ua": {
     "var_name": "U",
@@ -260,8 +217,7 @@
   },
   "uas": {
     "var_name": "XXX",
-    "units": "m s-1",
-    "is_var_2d": true
+    "units": "m s-1"
   },
   "va": {
     "var_name": "V",
@@ -269,8 +225,7 @@
   },
   "vas": {
     "var_name": "XXX",
-    "units": "m s-1",
-    "is_var_2d": true
+    "units": "m s-1"
   },
   "wap": {
     "var_name": "OMEGA",
