@@ -643,6 +643,12 @@ contains
       end if
       select case (size(this%var_info(i)%dims))
       case (3) ! 2D variable
+        if (any(['pr  ','prc ','prl ','prsn'] == this%var_info(i)%table_var_name)) then
+          if (this%var_info(i)%units == 'm s-1') then
+            call log_warning('Change ' // trim(this%var_info(i)%model_var_name) // ' units from m s-1 to kg m-2 s-1, 1000 will be muplied to the values.')
+            this%var_info(i)%units = 'kg m-2 s-1'
+          end if
+        end if
         this%var_info(i)%var_id = cmor_variable(         &
           table_entry=this%var_info(i)%table_var_name  , &
           units=this%var_info(i)%units                 , &

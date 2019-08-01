@@ -22,11 +22,11 @@
     "units": "%"
   },
   "hursmax": {
-    "var_name": "XXX",
+    "var_name": "RHREFHMX",
     "units": "%"
   },
   "hursmin": {
-    "var_name": "XXX",
+    "var_name": "RHREFHMN",
     "units": "%"
   },
   "hus": {
@@ -46,7 +46,7 @@
     "units": "m s-1"
   },
   "prsn": {
-    "var_name": "XXX",
+    "var_name": "PRECSC",
     "units": "m s-1"
   },
   "psl": {
