@@ -192,6 +192,8 @@ contains
     real(8), allocatable, dimension(:,:,:) :: array_3d_half
     real(8), allocatable, dimension(:,:,:) :: array_3d_plev19
     real(8), allocatable, dimension(:,:,:) :: array_3d_plev8
+    character(256) file_prefix, file_path
+    logical file_exist
 
     allocate(ps             (size(gamil_lon),size(gamil_lat)))
     allocate(array_2d       (size(gamil_lon),size(gamil_lat)))
@@ -216,6 +218,7 @@ contains
       dt = timedelta(hours=3)
       num_time = time_period%total_seconds() / 86400 * 8
     end select
+    file_prefix = trim(experiment_path) // '/' // trim(case_id) // '.gamil.' // trim(hist_tag) // '.'
     do ivar = 1, gamil%num_var
       if (gamil%var_info(ivar)%model_var_name == 'XXX') cycle ! Skip the incomplete variable.
       call log_notice('Convert variable ' // trim(gamil%var_info(ivar)%table_var_name) // ' ...')
@@ -230,7 +233,21 @@ contains
           last_year = time%year
         end if
         if (time_step == 1) then
-          call gamil_reader_open(trim(experiment_path) // '/' // trim(case_id) // '.gamil.' // trim(hist_tag) // '.' // time%format(time_format) // '.nc')
+          file_path = trim(file_prefix) // time%format(time_format) // '.nc'
+          inquire(file=file_path, exist=file_exist)
+          if (.not. file_exist) then
+            ! Search for the nearest history file.
+            do time_step = 1, 1000
+              time = time - dt
+              file_path = trim(file_prefix) // time%format(time_format) // '.nc'
+              inquire(file=file_path, exist=file_exist)
+              if (file_exist) exit
+            end do
+            if (.not. file_exist) call log_error('Cannot find the start history file!')
+            time = start_time ! Reset time to start_time.
+            time_step = time_step + 1
+          end if
+          call gamil_reader_open(file_path)
         end if
         call gamil_reader_get_var('time'     , time_axis_value(1), time_step=time_step)
         call gamil_reader_get_var('time_bnds', time_axis_bnds(:,1), time_step=time_step)
