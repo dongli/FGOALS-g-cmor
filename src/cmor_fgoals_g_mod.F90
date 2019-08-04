@@ -37,16 +37,17 @@ module cmor_fgoals_g_mod
   character(256), parameter :: table_root = '../tables/cmip6/Tables'
 
   ! Axis indices
-  integer, parameter :: time_axis_idx     = 1
-  integer, parameter :: time1_axis_idx    = 2
-  integer, parameter :: time2_axis_idx    = 3
-  integer, parameter :: lon_axis_idx      = 4
-  integer, parameter :: lat_axis_idx      = 5
-  integer, parameter :: lev_axis_idx      = 6
-  integer, parameter :: ilev_axis_idx     = 7
-  integer, parameter :: plev19_axis_idx   = 8
-  integer, parameter :: plev8_axis_idx    = 9
-  integer, parameter :: height2m_axis_idx = 10
+  integer, parameter :: time_axis_idx      = 1
+  integer, parameter :: time1_axis_idx     = 2
+  integer, parameter :: time2_axis_idx     = 3
+  integer, parameter :: lon_axis_idx       = 4
+  integer, parameter :: lat_axis_idx       = 5
+  integer, parameter :: lev_axis_idx       = 6
+  integer, parameter :: ilev_axis_idx      = 7
+  integer, parameter :: plev19_axis_idx    = 8
+  integer, parameter :: plev8_axis_idx     = 9
+  integer, parameter :: height2m_axis_idx  = 10
+  integer, parameter :: height10m_axis_idx = 11
 
   type var_info_type
     integer var_id
@@ -61,18 +62,19 @@ module cmor_fgoals_g_mod
   end type var_info_type
 
   type axis_bundle_type
-    integer, dimension(3) :: axis_ids_2d          ! lon, lat, time
-    integer, dimension(4) :: axis_ids_3d_plev19   ! lon, lat, plev19, time
-    integer, dimension(4) :: axis_ids_3d_plev8    ! lon, lat, plev8 , time
-    integer, dimension(4) :: axis_ids_3d_full     ! lon, lat, lev   , time
-    integer, dimension(4) :: axis_ids_3d_half     ! lon, lat, ilev  , time
-    integer, dimension(4) :: axis_ids_2d_height2m ! lon, lat, time  , height2m
+    integer, dimension(3) :: axis_ids_2d           ! lon, lat, time
+    integer, dimension(4) :: axis_ids_3d_plev19    ! lon, lat, plev19, time
+    integer, dimension(4) :: axis_ids_3d_plev8     ! lon, lat, plev8 , time
+    integer, dimension(4) :: axis_ids_3d_full      ! lon, lat, lev   , time
+    integer, dimension(4) :: axis_ids_3d_half      ! lon, lat, ilev  , time
+    integer, dimension(4) :: axis_ids_2d_height2m  ! lon, lat, time  , height2m
+    integer, dimension(4) :: axis_ids_2d_height10m ! lon, lat, time  , height10m
   end type axis_bundle_type
 
   type model_info_type
     character(50) :: time_units = 'N/A'
     integer table_id
-    integer axis_ids(10) ! See axis indices for ordering.
+    integer axis_ids(11) ! See axis indices for ordering.
     type(axis_bundle_type) axes_time  ! Axes with time axis
     type(axis_bundle_type) axes_time1 ! Axes with time1 axis
     type(axis_bundle_type) axes_time2 ! Axes with time2 axis
@@ -355,13 +357,13 @@ contains
     call f_table%load_file(filename=table_json_file_path)
     call f_table%get('variable_entry', table_var_entry)
     if (.not. associated(table_var_entry)) then
-      call log_error('Failed to parse ' // trim(table_json_file_path) // '!')
+      call log_error('Failed to parse ' // trim(table_json_file_path) // ' to get variable_entry!')
     end if
     ! Load model json file to inquire variable mapping between CMOR and model.
     call f_model%load_file(filename=model_json_file_path)
     call f_model%get('.', model_var_entry)
     if (.not. associated(model_var_entry)) then
-      call log_error('Failed to parse ' // trim(model_json_file_path) // '!')
+      call log_error('Failed to parse ' // trim(model_json_file_path) // ' to get model_var_entry!')
     end if
     call json%info(model_var_entry, n_children=this%num_var)
     allocate(this%var_info(this%num_var))
@@ -419,6 +421,7 @@ contains
     integer, dimension(4) :: local_axis_ids_3d_plev19
     integer, dimension(4) :: local_axis_ids_3d_plev8
     integer, dimension(4) :: local_axis_ids_2d_height2m
+    integer, dimension(4) :: local_axis_ids_2d_height10m
     type(json_value), pointer :: var
 
     ierr = cmor_dataset_json('../src/CMIP6_' // trim(experiment_id) // '.json')
@@ -500,6 +503,13 @@ contains
       units='m'                                 , &
       coord_vals=[2])
 
+    ! Height 10m level axis
+    this%axis_ids(height10m_axis_idx) = cmor_axis( &
+      table_entry='height10m'                    , &
+      length=1                                   , &
+      units ='m'                                 , &
+      coord_vals=[10])
+
     this%axes_time%axis_ids_2d = [          &
       this%axis_ids(lon_axis_idx)         , &
       this%axis_ids(lat_axis_idx)         , &
@@ -534,6 +544,12 @@ contains
       this%axis_ids(lat_axis_idx)         , &
       this%axis_ids(time_axis_idx)        , &
       this%axis_ids(height2m_axis_idx)      &
+    ]
+    this%axes_time%axis_ids_2d_height10m = [&
+      this%axis_ids(lon_axis_idx)         , &
+      this%axis_ids(lat_axis_idx)         , &
+      this%axis_ids(time_axis_idx)        , &
+      this%axis_ids(height10m_axis_idx)     &
     ]
     this%axes_time1%axis_ids_2d = [         &
       this%axis_ids(lon_axis_idx)         , &
@@ -570,6 +586,12 @@ contains
       this%axis_ids(time1_axis_idx)        , &
       this%axis_ids(height2m_axis_idx)       &
     ]
+    this%axes_time1%axis_ids_2d_height10m = [&
+      this%axis_ids(lon_axis_idx)          , &
+      this%axis_ids(lat_axis_idx)          , &
+      this%axis_ids(time1_axis_idx)        , &
+      this%axis_ids(height10m_axis_idx)      &
+    ]
     this%axes_time2%axis_ids_2d = [          &
       this%axis_ids(lon_axis_idx)          , &
       this%axis_ids(lat_axis_idx)          , &
@@ -605,6 +627,12 @@ contains
       this%axis_ids(time2_axis_idx)        , &
       this%axis_ids(height2m_axis_idx)       &
     ]
+    this%axes_time2%axis_ids_2d_height10m = [&
+      this%axis_ids(lon_axis_idx)          , &
+      this%axis_ids(lat_axis_idx)          , &
+      this%axis_ids(time2_axis_idx)        , &
+      this%axis_ids(height10m_axis_idx)      &
+    ]
     ierr = cmor_zfactor(                     &
       zaxis_id=this%axis_ids(lev_axis_idx) , &
       zfactor_name='ptop'                  , &
@@ -620,26 +648,29 @@ contains
     do i = 1, this%num_var
       if (this%var_info(i)%model_var_name == 'XXX') cycle
       if (any(this%var_info(i)%dims == 'time1')) then
-        local_axis_ids_2d          = this%axes_time1%axis_ids_2d
-        local_axis_ids_3d_full     = this%axes_time1%axis_ids_3d_full
-        local_axis_ids_3d_half     = this%axes_time1%axis_ids_3d_half
-        local_axis_ids_3d_plev19   = this%axes_time1%axis_ids_3d_plev19
-        local_axis_ids_3d_plev8    = this%axes_time1%axis_ids_3d_plev8
-        local_axis_ids_2d_height2m = this%axes_time1%axis_ids_2d_height2m
+        local_axis_ids_2d           = this%axes_time1%axis_ids_2d
+        local_axis_ids_3d_full      = this%axes_time1%axis_ids_3d_full
+        local_axis_ids_3d_half      = this%axes_time1%axis_ids_3d_half
+        local_axis_ids_3d_plev19    = this%axes_time1%axis_ids_3d_plev19
+        local_axis_ids_3d_plev8     = this%axes_time1%axis_ids_3d_plev8
+        local_axis_ids_2d_height2m  = this%axes_time1%axis_ids_2d_height2m
+        local_axis_ids_2d_height10m = this%axes_time1%axis_ids_2d_height10m
       else if (any(this%var_info(i)%dims == 'time2')) then
-        local_axis_ids_2d          = this%axes_time2%axis_ids_2d
-        local_axis_ids_3d_full     = this%axes_time2%axis_ids_3d_full
-        local_axis_ids_3d_half     = this%axes_time2%axis_ids_3d_half
-        local_axis_ids_3d_plev19   = this%axes_time2%axis_ids_3d_plev19
-        local_axis_ids_3d_plev8    = this%axes_time2%axis_ids_3d_plev8
-        local_axis_ids_2d_height2m = this%axes_time2%axis_ids_2d_height2m
+        local_axis_ids_2d           = this%axes_time2%axis_ids_2d
+        local_axis_ids_3d_full      = this%axes_time2%axis_ids_3d_full
+        local_axis_ids_3d_half      = this%axes_time2%axis_ids_3d_half
+        local_axis_ids_3d_plev19    = this%axes_time2%axis_ids_3d_plev19
+        local_axis_ids_3d_plev8     = this%axes_time2%axis_ids_3d_plev8
+        local_axis_ids_2d_height2m  = this%axes_time2%axis_ids_2d_height2m
+        local_axis_ids_2d_height10m = this%axes_time2%axis_ids_2d_height10m
       else
-        local_axis_ids_2d          = this%axes_time%axis_ids_2d
-        local_axis_ids_3d_full     = this%axes_time%axis_ids_3d_full
-        local_axis_ids_3d_half     = this%axes_time%axis_ids_3d_half
-        local_axis_ids_3d_plev19   = this%axes_time%axis_ids_3d_plev19
-        local_axis_ids_3d_plev8    = this%axes_time%axis_ids_3d_plev8
-        local_axis_ids_2d_height2m = this%axes_time%axis_ids_2d_height2m
+        local_axis_ids_2d           = this%axes_time%axis_ids_2d
+        local_axis_ids_3d_full      = this%axes_time%axis_ids_3d_full
+        local_axis_ids_3d_half      = this%axes_time%axis_ids_3d_half
+        local_axis_ids_3d_plev19    = this%axes_time%axis_ids_3d_plev19
+        local_axis_ids_3d_plev8     = this%axes_time%axis_ids_3d_plev8
+        local_axis_ids_2d_height2m  = this%axes_time%axis_ids_2d_height2m
+        local_axis_ids_2d_height10m = this%axes_time%axis_ids_2d_height10m
       end if
       select case (size(this%var_info(i)%dims))
       case (3) ! 2D variable
@@ -684,6 +715,12 @@ contains
             table_entry=this%var_info(i)%table_var_name, &
             units=this%var_info(i)%units               , &
             axis_ids=local_axis_ids_2d_height2m        , &
+            positive=this%var_info(i)%positive)
+        else if (any(this%var_info(i)%dims == 'height10m')) then
+          this%var_info(i)%var_id = cmor_variable(       &
+            table_entry=this%var_info(i)%table_var_name, &
+            units=this%var_info(i)%units               , &
+            axis_ids=local_axis_ids_2d_height10m       , &
             positive=this%var_info(i)%positive)
         end if
       case default

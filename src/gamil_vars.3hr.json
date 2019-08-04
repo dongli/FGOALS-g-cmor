@@ -1,77 +1,88 @@
 {
-	"pr": {
-		"var_name": "PRECT",
-		"units": "m s-1"
-	},
-	"prc": {
-		"var_name": "PRECC",
-		"units": "m s-1"
-	},
-	"prsn": {
-		"var_name": "XXX"
-	},
-	"tas": {
-		"var_name": "TREFHT",
-		"units": "K"
-	},
-	"hfls": {
-		"var_name": "LHFLX",
-		"units": "W m-2"
-	},
-	"hfss": {
-		"var_name": "SHFLX",
-		"units": "W m-2"
-	},
-	"rlds": {
-		"var_name": "FLDS",
-		"units": "W m-2"
-	},
-	"rldscs": {
-		"var_name": "FLDSC",
-		"units": "W m-2"
-	},
-	"rlus": {
-		"var_name": "FLUS",
-		"units": "W m-2"
-	},
-	"rsds": {
-		"var_name": "FSDS",
-		"units": "W m-2"
-	},
-	"rsdscs": {
-		"var_name": "FSDSC",
-		"units": "W m-2"
-	},
-	"rsus": {
-		"var_name": "FSUS",
-		"units": "W m-2"
-	},
-	"rsuscs": {
-		"var_name": "FSUSC",
-		"units": "W m-2"
-	},
-	"uas": {
-		"var_name": "XXX",
-		"units": "m s-1"
-	},
-	"vas": {
-		"var_name": "XXX",
-		"units": "m s-1"
-	},
-	"huss": {
-		"var_name": "QREFHT",
-		"units": "1"
-	},
-	"ps": {
-		"var_name": "PS",
-		"units": "Pa"
-	},
-	"clt": {
-		"var_name": "CLDTOT",
-		"units": "1"
-	},
-	"rsdsdiff": {
-		"var_name": "SOLLD+SOLSD",
-		"units": "W m-2"
-	}
+  "pr": {
+    "var_name": "PRECT",
+    "units": "m s-1"
+  },
+  "prc": {
+    "var_name": "PRECC",
+    "units": "m s-1"
+  },
+  "prsn": {
+    "var_name": "XXX",
+    "units": "m s-1"
+  },
+  "tas": {
+    "var_name": "TREFHT",
+    "units": "K"
+  },
+  "hfls": {
+    "var_name": "LHFLX",
+    "units": "W m-2",
+    "positive": "up"
+  },
+  "hfss": {
+    "var_name": "SHFLX",
+    "units": "W m-2",
+    "positive": "up"
+  },
+  "rlds": {
+    "var_name": "FLDS",
+    "units": "W m-2",
+    "positive": "down"
+  },
+  "rldscs": {
+    "var_name": "FLDSC",
+    "units": "W m-2",
+    "positive": "down"
+  },
+  "rlus": {
+    "var_name": "FLUS",
+    "units": "W m-2",
+    "positive": "up"
+  },
+  "rsds": {
+    "var_name": "FSDS",
+    "units": "W m-2",
+    "positive": "down"
+  },
+  "rsdscs": {
+    "var_name": "FSDSC",
+    "units": "W m-2",
+    "positive": "down"
+  },
+  "rsus": {
+    "var_name": "FSUS",
+    "units": "W m-2",
+    "positive": "up"
+  },
+  "rsuscs": {
+    "var_name": "FSUSC",
+    "units": "W m-2",
+    "positive": "up"
+  },
+  "uas": {
+    "var_name": "XXX",
+    "units": "m s-1"
+  },
+  "vas": {
+    "var_name": "XXX",
+    "units": "m s-1"
+  },
+  "huss": {
+    "var_name": "QREFHT",
+    "units": "1"
+  },
+  "ps": {
+    "var_name": "PS",
+    "units": "Pa"
+  },
+  "clt": {
+    "var_name": "CLDTOT",
+    "units": "1"
+  },
+  "rsdsdiff": {
+    "var_name": "SOLLD+SOLSD",
+    "units": "W m-2",
+    "positive": "down"
+  }
 }

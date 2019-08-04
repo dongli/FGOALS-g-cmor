@@ -61,7 +61,7 @@
   "rls": {
     "var_name": "FLNS",
     "units": "W m-2",
-    "positive": "down"
+    "positive": "up"
   },
   "rlus": {
     "var_name": "FLUS",
@@ -93,7 +93,7 @@
     "units": "m s-1"
   },
   "sfcWindmax": {
-    "var_name": "XXX",
+    "var_name": "WIND10MX",
     "units": "m s-1"
   },
   "ta": {
