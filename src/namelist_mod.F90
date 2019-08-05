@@ -6,6 +6,10 @@ module namelist_mod
 
   character(30) experiment_id
   character(256) experiment_path
+  character(10) :: realization_index = '1'
+  character(10) :: initialization_index = '1'
+  character(10) :: physics_index = '1'
+  character(10) :: forcing_index = '1'
   character(30) case_id
   character(30) :: frequencies(30) = ''
   character(3 ) :: gamil_hist_tags(30) = ''
@@ -17,6 +21,10 @@ module namelist_mod
   namelist /cmor_fgoals_g/ &
     experiment_id        , &
     experiment_path      , &
+    realization_index    , &
+    initialization_index , &
+    physics_index        , &
+    forcing_index        , &
     case_id              , &
     frequencies          , &
     gamil_hist_tags      , &

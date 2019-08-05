@@ -116,7 +116,7 @@ contains
 
     call io_init()
 
-    ierr = cmor_setup(inpath=table_root, netcdf_file_action=cmor_replace) ! , exit_control=cmor_exit_on_warning)
+    ierr = cmor_setup(inpath=table_root, netcdf_file_action=cmor_replace, exit_control=cmor_exit_on_warning)
     call handle_cmor_error(ierr, __FILE__, __LINE__)
 
     start_time = create_datetime(start_time_str, '%Y', calendar=datetime_noleap_calendar)
@@ -181,7 +181,7 @@ contains
     integer     , intent(in) :: steps_per_file
     character(*), intent(in) :: time_format
 
-    type(datetime_type) time
+    type(datetime_type) time, time0
     type(timedelta_type) dt
     integer ierr, ivar, itime, last_year
     integer time_step
@@ -233,21 +233,26 @@ contains
           last_year = time%year
         end if
         if (time_step == 1) then
+          ! NOTE: For history other than monthly, the time in the file name is behind one time period.
+          if (frequency /= 'Amon') time = time + dt
           file_path = trim(file_prefix) // time%format(time_format) // '.nc'
           inquire(file=file_path, exist=file_exist)
           if (.not. file_exist) then
-            ! Search for the nearest history file.
+            ! Search for the nearest previous history file.
+            time0 = time
             do time_step = 1, 1000
               time = time - dt
+              if (time%hour /= 0) cycle ! Only check 00 hour.
               file_path = trim(file_prefix) // time%format(time_format) // '.nc'
               inquire(file=file_path, exist=file_exist)
               if (file_exist) exit
             end do
             if (.not. file_exist) call log_error('Cannot find the start history file!')
-            time = start_time ! Reset time to start_time.
-            time_step = time_step + 1
+            time = time0
           end if
+          if (frequency /= 'Amon' .and. itime == 1) time_step = time_step + 1
           call gamil_reader_open(file_path)
+          if (frequency /= 'Amon') time = time - dt ! Fix for inconsistency of time in file name.
         end if
         call gamil_reader_get_var('time'     , time_axis_value(1), time_step=time_step)
         call gamil_reader_get_var('time_bnds', time_axis_bnds(:,1), time_step=time_step)
@@ -321,7 +326,7 @@ contains
               ntimes_passed=1                    , &
               time_vals=time_axis_value          , &
               time_bnds=time_axis_bnds)
-          else if (any(gamil%var_info(ivar)%dims == 'height2m')) then
+          else if (any(gamil%var_info(ivar)%dims == 'height2m') .or. any(gamil%var_info(ivar)%dims == 'height10m')) then
             call gamil_reader_get_var(gamil%var_info(ivar)%model_var_name, array_2d, time_step=time_step)
             ierr = cmor_write(                     &
               var_id=gamil%var_info(ivar)%var_id , &
@@ -444,6 +449,22 @@ contains
     ierr = cmor_dataset_json('../src/CMIP6_' // trim(experiment_id) // '.json')
     call handle_cmor_error(ierr, __FILE__, __LINE__)
     call log_notice('Create dataset for ' // trim(experiment_id) // '.')
+
+    ierr = cmor_set_cur_dataset_attribute('realization_index', realization_index, 0)
+    call handle_cmor_error(ierr, __FILE__, __LINE__)
+    call log_notice('Set dataset attribute realization_index to ' // trim(realization_index) // '.')
+
+    ierr = cmor_set_cur_dataset_attribute('initialization_index', initialization_index, 0)
+    call handle_cmor_error(ierr, __FILE__, __LINE__)
+    call log_notice('Set dataset attribute initialization_index to ' // trim(initialization_index) // '.')
+
+    ierr = cmor_set_cur_dataset_attribute('physics_index', physics_index, 0)
+    call handle_cmor_error(ierr, __FILE__, __LINE__)
+    call log_notice('Set dataset attribute physics_index to ' // trim(physics_index) // '.')
+
+    ierr = cmor_set_cur_dataset_attribute('forcing_index', forcing_index, 0)
+    call handle_cmor_error(ierr, __FILE__, __LINE__)
+    call log_notice('Set dataset attribute forcing_index to ' // trim(forcing_index) // '.')
 
     this%table_id = cmor_load_table(trim(table_root) // '/CMIP6_' // trim(frequency) // '.json')
     call log_notice('Load table CMIP6_' // trim(frequency) // '.json.')
