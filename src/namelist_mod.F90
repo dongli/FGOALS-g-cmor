@@ -10,6 +10,7 @@ module namelist_mod
   character(10) :: initialization_index = '1'
   character(10) :: physics_index = '1'
   character(10) :: forcing_index = '1'
+  character(20) :: branch_time_in_parent = '0.0'
   character(30) case_id
   character(30) :: frequencies(30) = ''
   character(3 ) :: gamil_hist_tags(30) = ''
@@ -25,6 +26,7 @@ module namelist_mod
     initialization_index , &
     physics_index        , &
     forcing_index        , &
+    branch_time_in_parent, &
     case_id              , &
     frequencies          , &
     gamil_hist_tags      , &

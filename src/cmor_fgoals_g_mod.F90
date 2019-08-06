@@ -34,7 +34,8 @@ module cmor_fgoals_g_mod
   public cmor_fgoals_g_run
   public cmor_fgoals_g_final
 
-  character(256), parameter :: table_root = '../tables/cmip6/Tables'
+  character(1024) project_root
+  character(1024) table_root
 
   ! Axis indices
   integer, parameter :: time_axis_idx      = 1
@@ -114,6 +115,9 @@ contains
 
     integer ierr, i
 
+    project_root = trim(string_delete(__FILE__, 'cmor_fgoals_g_mod.F90')) // '/..'
+    table_root = trim(project_root) // '/tables/cmip6/Tables'
+
     call io_init()
 
     ierr = cmor_setup(inpath=table_root, netcdf_file_action=cmor_replace, exit_control=cmor_exit_on_warning)
@@ -139,7 +143,7 @@ contains
     do i = 1, size(frequencies)
       if (frequencies(i) /= '') then
         call gamil%init(trim(table_root) // '/CMIP6_' // trim(frequencies(i)) // '.json', &
-                        '../src/gamil_vars.' // trim(frequencies(i)) // '.json')
+                        trim(project_root) // '/src/gamil_vars.' // trim(frequencies(i)) // '.json')
         call gamil_write(frequencies(i), gamil_hist_tags(i), gamil_steps_per_file(i), gamil_time_formats(i))
       end if
     end do
@@ -244,10 +248,14 @@ contains
               time = time - dt
               if (time%hour /= 0) cycle ! Only check 00 hour.
               file_path = trim(file_prefix) // time%format(time_format) // '.nc'
+              call log_warning('Check file ' // trim(file_path) // '.')
               inquire(file=file_path, exist=file_exist)
               if (file_exist) exit
             end do
-            if (.not. file_exist) call log_error('Cannot find the start history file!')
+            if (.not. file_exist) then
+              call log_warning('Cannot find the start history file!')
+              exit
+            end if
             time = time0
           end if
           if (frequency /= 'Amon' .and. itime == 1) time_step = time_step + 1
@@ -446,7 +454,7 @@ contains
     integer, dimension(4) :: local_axis_ids_2d_height10m
     type(json_value), pointer :: var
 
-    ierr = cmor_dataset_json('../src/CMIP6_' // trim(experiment_id) // '.json')
+    ierr = cmor_dataset_json(trim(project_root) // '/src/CMIP6_' // trim(experiment_id) // '.json')
     call handle_cmor_error(ierr, __FILE__, __LINE__)
     call log_notice('Create dataset for ' // trim(experiment_id) // '.')
 
@@ -465,6 +473,10 @@ contains
     ierr = cmor_set_cur_dataset_attribute('forcing_index', forcing_index, 0)
     call handle_cmor_error(ierr, __FILE__, __LINE__)
     call log_notice('Set dataset attribute forcing_index to ' // trim(forcing_index) // '.')
+
+    ierr = cmor_set_cur_dataset_attribute('branch_time_in_parent', branch_time_in_parent, 0)
+    call handle_cmor_error(ierr, __FILE__, __LINE__)
+    call log_notice('Set dataset attribute branch_time_in_parent to ' // trim(branch_time_in_parent) // '.')
 
     this%table_id = cmor_load_table(trim(table_root) // '/CMIP6_' // trim(frequency) // '.json')
     call log_notice('Load table CMIP6_' // trim(frequency) // '.json.')
