@@ -134,6 +134,22 @@ contains
     select case (var_name)
     case ('PRECT', 'PRECC')
       array = array * 1000
+    case ('PRECSC+PRECSL')
+      if (io_has_var('gamil', 'PRECSC') .and. io_has_var('gamil', 'PRECSL')) then
+        call io_input('gamil', 'PRECSC', array, time_step=time_step)
+        call io_input('gamil', 'PRECSL', buf_2d, time_step=time_step)
+        array = array + buf_2d
+      else
+        call log_warning('Variable PRECSC+PRECSL cannot be outputted!')
+      end if
+    case ('TGCLDLWP+TGCLDIWP')
+      if (io_has_var('gamil', 'TGCLDLWP') .and. io_has_var('gamil', 'TGCLDIWP')) then
+        call io_input('gamil', 'TGCLDLWP', array, time_step=time_step)
+        call io_input('gamil', 'TGCLDIWP', buf_2d, time_step=time_step)
+        array = array + buf_2d
+      else
+        call log_warning('Variable TGCLDLWP+TGCLDIWP cannot be outputted!')
+      end if
     case ('FLNS')
       if (io_has_var('gamil', 'FLUS') .and. io_has_var('gamil', 'FLDS')) then
         call io_input('gamil', 'FLUS', array, time_step=time_step)

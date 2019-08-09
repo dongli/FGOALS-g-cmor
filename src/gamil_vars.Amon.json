@@ -20,8 +20,8 @@
     "units": "kg kg-1"
   },
   "clivi": {
-    "var_name": "XXX",
-    "units": "kg kg-1"
+    "var_name": "TGCLDIWP",
+    "units": "g m-2"
   },
   "clt": {
     "var_name": "CLDTOT",
@@ -32,8 +32,8 @@
     "units": "kg kg-1"
   },
   "clwvi": {
-    "var_name": "XXX",
-    "units": "1"
+    "var_name": "TGCLDLWP+TGCLDIWP",
+    "units": "g m-2"
   },
   "evspsbl": {
     "var_name": "QFLX",
@@ -54,7 +54,7 @@
     "units": "%"
   },
   "hurs": {
-    "var_name": "XXX",
+    "var_name": "RHREFHT",
     "units": "%"
   },
   "hus": {
@@ -88,18 +88,18 @@
   },
   "pr": {
     "var_name": "PRECT",
-    "units": "kg m-2 s-1"
+    "units": "m s-1"
   },
   "prc": {
     "var_name": "PRECC",
-    "units": "kg m-2 s-1"
+    "units": "m s-1"
   },
   "prsn": {
-    "var_name": "XXX",
-    "units": "kg m-2 s-1"
+    "var_name": "PRECSC+PRECSL",
+    "units": "m s-1"
   },
   "prw": {
-    "var_name": "TGCLDLWP",
+    "var_name": "TMQ",
     "units": "kg m-2"
   },
   "psl": {
@@ -176,7 +176,7 @@
     "units": "1"
   },
   "sfcWind": {
-    "var_name": "XXX",
+    "var_name": "WIND10M",
     "units": "m s-1"
   },
   "ta": {
@@ -189,11 +189,11 @@
     "units": "K"
   },
   "tasmax": {
-    "var_name": "XXX",
+    "var_name": "TREFHTMX",
     "units": "K"
   },
   "tasmin": {
-    "var_name": "XXX",
+    "var_name": "TREFHTMN",
     "units": "K"
   },
   "tauu": {
