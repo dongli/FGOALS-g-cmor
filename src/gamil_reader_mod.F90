@@ -139,9 +139,12 @@ contains
         call io_input('gamil', 'PRECSC', array, time_step=time_step)
         call io_input('gamil', 'PRECSL', buf_2d, time_step=time_step)
         array = array + buf_2d
+        array = array * 1000
       else
         call log_warning('Variable PRECSC+PRECSL cannot be outputted!')
       end if
+    case ('RHREFHT')
+      where (array > 1.05) array = 1.05
     case ('TGCLDLWP+TGCLDIWP')
       if (io_has_var('gamil', 'TGCLDLWP') .and. io_has_var('gamil', 'TGCLDIWP')) then
         call io_input('gamil', 'TGCLDLWP', array, time_step=time_step)
