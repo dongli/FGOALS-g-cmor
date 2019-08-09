@@ -96,8 +96,7 @@
   },
   "prsn": {
     "var_name": "XXX",
-    "units": "kg m-2 s-1",
-    "is_var_2d": true
+    "units": "kg m-2 s-1"
   },
   "prw": {
     "var_name": "TGCLDLWP",
@@ -168,9 +167,9 @@
     "positive": "up"
   },
   "rtmt": {
-    "var_name": "FSNTOA",
+    "var_name": "FSNT-FLNT",
     "units": "W m-2",
-    "positive": "up"
+    "positive": "down"
   },
   "sci": {
     "var_name": "XXX",

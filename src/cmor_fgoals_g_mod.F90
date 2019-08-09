@@ -123,9 +123,8 @@ contains
     ierr = cmor_setup(inpath=table_root, netcdf_file_action=cmor_replace, exit_control=cmor_exit_on_warning)
     call handle_cmor_error(ierr, __FILE__, __LINE__)
 
-    start_time = create_datetime(start_time_str, '%Y', calendar=datetime_noleap_calendar)
-    end_time   = create_datetime(end_time_str  , '%Y', calendar=datetime_noleap_calendar)
-
+    start_time  = create_datetime(start_time_str(1), '%Y', calendar=datetime_noleap_calendar)
+    end_time    = create_datetime(end_time_str  (1), '%Y', calendar=datetime_noleap_calendar)
     time_period = end_time - start_time
 
     ! Get the first model data to inquire dimension information.
@@ -144,7 +143,12 @@ contains
       if (frequencies(i) /= '') then
         call gamil%init(trim(table_root) // '/CMIP6_' // trim(frequencies(i)) // '.json', &
                         trim(project_root) // '/src/gamil_vars.' // trim(frequencies(i)) // '.json')
-        call gamil_write(frequencies(i), gamil_hist_tags(i), gamil_steps_per_file(i), gamil_time_formats(i))
+        call gamil_write(frequencies(i),          &
+                         gamil_hist_tags(i),      &
+                         gamil_steps_per_file(i), &
+                         gamil_time_formats(i),   &
+                         start_time_str(i),       &
+                         end_time_str(i))
       end if
     end do
 
@@ -178,12 +182,14 @@ contains
 
   end subroutine handle_cmor_error
 
-  subroutine gamil_write(frequency, hist_tag, steps_per_file, time_format)
+  subroutine gamil_write(frequency, hist_tag, steps_per_file, time_format, start_time_str, end_time_str)
 
     character(*), intent(in) :: frequency
     character(*), intent(in) :: hist_tag
     integer     , intent(in) :: steps_per_file
     character(*), intent(in) :: time_format
+    character(*), intent(in) :: start_time_str
+    character(*), intent(in) :: end_time_str
 
     type(datetime_type) time, time0
     type(timedelta_type) dt
@@ -198,6 +204,10 @@ contains
     real(8), allocatable, dimension(:,:,:) :: array_3d_plev8
     character(256) file_prefix, file_path
     logical file_exist
+
+    start_time  = create_datetime(start_time_str, '%Y', calendar=datetime_noleap_calendar)
+    end_time    = create_datetime(end_time_str  , '%Y', calendar=datetime_noleap_calendar)
+    time_period = end_time - start_time
 
     allocate(ps             (size(gamil_lon),size(gamil_lat)))
     allocate(array_2d       (size(gamil_lon),size(gamil_lat)))
@@ -225,12 +235,12 @@ contains
     file_prefix = trim(experiment_path) // '/' // trim(case_id) // '.gamil.' // trim(hist_tag) // '.'
     do ivar = 1, gamil%num_var
       if (gamil%var_info(ivar)%model_var_name == 'XXX') cycle ! Skip the incomplete variable.
+      if (.not. all(selected_vars == '') .and. .not. any(selected_vars == gamil%var_info(ivar)%table_var_name)) cycle
       call log_notice('Convert variable ' // trim(gamil%var_info(ivar)%table_var_name) // ' ...')
       time = start_time
       time_step = 1
       last_year = time%year
       do itime = 1, num_time
-        call log_print(time%isoformat())
         ! Close previous file.
         if (time%year /= last_year) then
           ierr = cmor_close(gamil%var_info(ivar)%var_id, preserve=1)
@@ -246,7 +256,6 @@ contains
             time0 = time
             do time_step = 1, 1000
               time = time - dt
-              if (time%hour /= 0) cycle ! Only check 00 hour.
               file_path = trim(file_prefix) // time%format(time_format) // '.nc'
               call log_warning('Check file ' // trim(file_path) // '.')
               inquire(file=file_path, exist=file_exist)
@@ -257,14 +266,17 @@ contains
               exit
             end if
             time = time0
+            if (frequency /= 'Amon' .and. itime == 1) time_step = time_step + 1
           end if
-          if (frequency /= 'Amon' .and. itime == 1) time_step = time_step + 1
           call gamil_reader_open(file_path)
+          ! call log_notice('Open ' // trim(file_path) // '.')
           if (frequency /= 'Amon') time = time - dt ! Fix for inconsistency of time in file name.
         end if
+        call log_print(time%isoformat() // ' ' // trim(to_string(time_step)))
         call gamil_reader_get_var('time'     , time_axis_value(1), time_step=time_step)
         call gamil_reader_get_var('time_bnds', time_axis_bnds(:,1), time_step=time_step)
         ! FIXME: Reset time_axis_value?
+        if (itime == 1) time_axis_bnds(1,1) = 51100
         time_axis_value(1) = (time_axis_bnds(2,1) + time_axis_bnds(1,1)) * 0.5d0
         select case (size(gamil%var_info(ivar)%dims))
         case (3) ! 2D variable
@@ -697,6 +709,7 @@ contains
 
     do i = 1, this%num_var
       if (this%var_info(i)%model_var_name == 'XXX') cycle
+      if (.not. all(selected_vars == '') .and. .not. any(selected_vars == this%var_info(i)%table_var_name)) cycle
       if (any(this%var_info(i)%dims == 'time1')) then
         local_axis_ids_2d           = this%axes_time1%axis_ids_2d
         local_axis_ids_3d_full      = this%axes_time1%axis_ids_3d_full

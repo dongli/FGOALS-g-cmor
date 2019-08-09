@@ -12,12 +12,13 @@ module namelist_mod
   character(10) :: forcing_index = '1'
   character(20) :: branch_time_in_parent = '0.0'
   character(30) case_id
-  character(30) :: frequencies(30) = ''
-  character(3 ) :: gamil_hist_tags(30) = ''
-  integer       :: gamil_steps_per_file(30) = 1
-  character(30) :: gamil_time_formats(30) = '%Y-%m'
-  character(30) start_time
-  character(30) end_time
+  character(30) :: frequencies(10) = ''
+  character(3 ) :: gamil_hist_tags(10) = ''
+  integer       :: gamil_steps_per_file(10) = 1
+  character(30) :: gamil_time_formats(10) = '%Y-%m'
+  character(30) :: start_time(10) = ''
+  character(30) :: end_time(10) = ''
+  character(10) :: selected_vars(100) = ''
 
   namelist /cmor_fgoals_g/ &
     experiment_id        , &
@@ -33,7 +34,8 @@ module namelist_mod
     gamil_steps_per_file , &
     gamil_time_formats   , &
     start_time           , &
-    end_time
+    end_time             , &
+    selected_vars
 
 contains
 
@@ -52,6 +54,11 @@ contains
       if (.not. any(['Amon  ','day   ', '6hrLev', '3hr   '] == frequencies(i))) then
         call log_error('Invalid namelist option frequency "' // trim(frequencies(i)) // '"! Choose Amon, 3hr, 6hrLev and day.')
       end if
+    end do
+
+    do i = 2, size(start_time)
+      if (start_time(i) == '') start_time(i) = start_time(i - 1)
+      if (end_time  (i) == '') end_time  (i) = end_time  (i - 1)
     end do
 
   end subroutine namelist_parse

@@ -150,6 +150,14 @@ contains
       else
         call log_warning('Variable SOLLD+SOLSD cannot be outputted!')
       end if
+    case ('FSNT-FLNT')
+      if (io_has_var('gamil', 'FSNT') .and. io_has_var('gamil', 'FLNT')) then
+        call io_input('gamil', 'FSNT', array, time_step=time_step)
+        call io_input('gamil', 'FLNT', buf_2d, time_step=time_step)
+        array = array - buf_2d
+      else
+        call log_warning('Variable FSNT-FLNT cannot be outputted!')
+      end if
     end select
 
   end subroutine gamil_reader_get_var_2d
