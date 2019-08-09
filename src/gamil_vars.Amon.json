@@ -189,11 +189,11 @@
     "units": "K"
   },
   "tasmax": {
-    "var_name": "TREFHTMX",
+    "var_name": "TREFMXAV",
     "units": "K"
   },
   "tasmin": {
-    "var_name": "TREFHTMN",
+    "var_name": "TREFMNAV",
     "units": "K"
   },
   "tauu": {

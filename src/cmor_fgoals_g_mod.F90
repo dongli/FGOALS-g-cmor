@@ -427,9 +427,9 @@ contains
       end do
       ! Check the time cell method.
       call json%get(table_var, 'cell_methods', str)
-      if (string_count(str, 'time: mean') == 1) then
+      if (string_count(str, 'time: mean') > 0) then
         this%var_info(ivar)%time_method = 'mean'
-      else if (string_count(str, 'time: point') == 1) then
+      else if (string_count(str, 'time: point') > 0) then
         this%var_info(ivar)%time_method = 'point'
       else
         call log_error('Unsupported time_method ' // trim(str) // ' of ' // trim(this%var_info(ivar)%table_var_name) // '!')
