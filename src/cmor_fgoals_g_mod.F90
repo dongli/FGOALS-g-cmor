@@ -58,6 +58,7 @@ module cmor_fgoals_g_mod
     character(30) :: vinterp  = ''
     character(4 ) :: positive = ''
     character(10), allocatable :: dims(:)
+    character(10) :: time_method = 'mean'
   contains
     final :: var_info_final
   end type var_info_type
@@ -276,8 +277,9 @@ contains
         call gamil_reader_get_var('time'     , time_axis_value(1), time_step=time_step)
         call gamil_reader_get_var('time_bnds', time_axis_bnds(:,1), time_step=time_step)
         ! FIXME: Reset time_axis_value?
-        if (itime == 1) time_axis_bnds(1,1) = 51100
-        time_axis_value(1) = (time_axis_bnds(2,1) + time_axis_bnds(1,1)) * 0.5d0
+        if (gamil%var_info(ivar)%time_method == 'mean') then
+          time_axis_value(1) = (time_axis_bnds(2,1) + time_axis_bnds(1,1)) * 0.5d0
+        end if
         select case (size(gamil%var_info(ivar)%dims))
         case (3) ! 2D variable
           call gamil_reader_get_var(gamil%var_info(ivar)%model_var_name, array_2d, time_step=time_step)
@@ -423,6 +425,15 @@ contains
       do idim = 1, num_dim
         this%var_info(ivar)%dims(idim) = string_split(str, idim, ' ')
       end do
+      ! Check the time cell method.
+      call json%get(table_var, 'cell_methods', str)
+      if (string_count(str, 'time: mean') == 1) then
+        this%var_info(ivar)%time_method = 'mean'
+      else if (string_count(str, 'time: point') == 1) then
+        this%var_info(ivar)%time_method = 'point'
+      else
+        call log_error('Unsupported time_method ' // trim(str) // ' of ' // trim(this%var_info(ivar)%table_var_name) // '!')
+      end if
       call json%get(model_var, 'var_name', str)
       this%var_info(ivar)%model_var_name = str
       call json%get(model_var, 'units', str)
@@ -442,6 +453,7 @@ contains
         case default
           write(*, '(A)', advance='no') ' '
         end select
+        write(*, '(A)', advance='no') ' time: ' // trim(this%var_info(ivar)%time_method)
         write(*, *) this%var_info(ivar)%dims
       else
         write(*, '("* ", A8, " -> ", A8, " ", A)') this%var_info(ivar)%model_var_name, this%var_info(ivar)%table_var_name, &
