@@ -1,0 +1,141 @@
+{
+  "cldicemxrat27": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "cldwatmxrat27": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "dtauc": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "dtaus": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "grplmxrat27": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "hus27": {
+    "var_name": "Q",
+    "units": "kg kg-1"
+  },
+  "hus7h": {
+    "var_name": "Q",
+    "units": "kg kg-1"
+  },
+  "huss": {
+    "var_name": "QREFHT",
+    "units": "1"
+  },
+  "lwsffluxaero": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "lwtoafluxaerocs": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "psl": {
+    "var_name": "PSL",
+    "units": ""
+  },
+  "rainmxrat27": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "rv850": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "sfcWind": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "snowmxrat27": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "snw": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "swsffluxaero": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "swtoafluxaerocs": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "ta": {
+    "var_name": "T",
+    "units": "K",
+    "vinterp": "log_linear"
+  },
+  "ta27": {
+    "var_name": "T",
+    "units": "K",
+    "vinterp": "log_linear"
+  },
+  "ta7h": {
+    "var_name": "T",
+    "units": "K",
+    "vinterp": "log_linear"
+  },
+  "tas": {
+    "var_name": "TREFHT",
+    "units": "K"
+  },
+  "ts": {
+    "var_name": "TS",
+    "units": "K"
+  },
+  "ua": {
+    "var_name": "U",
+    "units": "m s-1"
+  },
+  "ua7h": {
+    "var_name": "U",
+    "units": "m s-1"
+  },
+  "uas": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "va": {
+    "var_name": "V",
+    "units": "m s-1"
+  },
+  "va7h": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "vas": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "vortmean": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "wbptemp7h": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "zg27": {
+    "var_name": "Z3",
+    "units": "m"
+  },
+  "zg500": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "zg7h": {
+    "var_name": "XXX",
+    "units": ""
+  }
+}

@@ -1,14 +1,14 @@
 {
-  "ps": {
-    "var_name": "PS",
-    "units": "Pa"
-  },
   "hus": {
     "var_name": "Q",
     "units": "kg kg-1"
   },
   "pfull": {
     "var_name": "<pfull>",
+    "units": "Pa"
+  },
+  "ps": {
+    "var_name": "PS",
     "units": "Pa"
   },
   "ta": {

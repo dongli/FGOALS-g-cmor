@@ -35,19 +35,45 @@
     "var_name": "TGCLDLWP+TGCLDIWP",
     "units": "g m-2"
   },
+  "co2": {
+    "var_name": "XXX",
+    "units": "m3 m-3"
+  },
+  "co2Clim": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "co2mass": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "co2massClim": {
+    "var_name": "XXX",
+    "units": ""
+  },
   "evspsbl": {
     "var_name": "QFLX",
     "units": "kg m-2 s-1"
   },
+  "fco2antt": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "fco2fos": {
+    "var_name": "XXX",
+    "units": ""
+  },
+  "fco2nat": {
+    "var_name": "XXX",
+    "units": ""
+  },
   "hfls": {
     "var_name": "LHFLX",
-    "units": "W m-2",
-    "positive": "up"
+    "units": "W m-2"
   },
   "hfss": {
     "var_name": "SHFLX",
-    "units": "W m-2",
-    "positive": "up"
+    "units": "W m-2"
   },
   "hur": {
     "var_name": "RELHUM",
@@ -63,20 +89,18 @@
   },
   "huss": {
     "var_name": "QREFHT",
-    "units": "kg kg-1"
+    "units": "1"
   },
   "mc": {
     "var_name": "CMFMC",
-    "units": "kg m-2 s-1",
-    "positive": "up"
+    "units": "kg m-2 s-1"
   },
   "o3": {
     "var_name": "O3VMR",
     "units": "m3 m-3"
   },
-  "ps": {
-    "var_name": "PS",
-    "units": "Pa"
+  "o3Clim": {
+    "var_name": "XXX",
   },
   "pfull": {
     "var_name": "<pfull>",
@@ -102,74 +126,65 @@
     "var_name": "TMQ",
     "units": "kg m-2"
   },
+  "ps": {
+    "var_name": "PS",
+    "units": "Pa"
+  },
   "psl": {
     "var_name": "PSL",
     "units": "Pa"
   },
   "rlds": {
     "var_name": "FLDS",
-    "units": "W m-2",
-    "positive": "down"
+    "units": "W m-2"
   },
   "rldscs": {
     "var_name": "FLDSC",
-    "units": "W m-2",
-    "positive": "down"
+    "units": "W m-2"
   },
   "rlus": {
     "var_name": "FLUS",
-    "units": "W m-2",
-    "positive": "up"
+    "units": "W m-2"
   },
   "rlut": {
     "var_name": "FLUTOA",
-    "units": "W m-2",
-    "positive": "up"
+    "units": "W m-2"
   },
   "rlutcs": {
     "var_name": "FLUTOAC",
-    "units": "W m-2",
-    "positive": "up"
+    "units": "W m-2"
   },
   "rsds": {
     "var_name": "FSDS",
-    "units": "W m-2",
-    "positive": "down"
+    "units": "W m-2"
   },
   "rsdscs": {
     "var_name": "FSDSC",
-    "units": "W m-2",
-    "positive": "down"
+    "units": "W m-2"
   },
   "rsdt": {
     "var_name": "FSDTOA",
-    "units": "W m-2",
-    "positive": "down"
+    "units": "W m-2"
   },
   "rsus": {
     "var_name": "FSUS",
-    "units": "W m-2",
-    "positive": "up"
+    "units": "W m-2"
   },
   "rsuscs": {
     "var_name": "FSUSC",
-    "units": "W m-2",
-    "positive": "up"
+    "units": "W m-2"
   },
   "rsut": {
     "var_name": "FSUTOA",
-    "units": "W m-2",
-    "positive": "up"
+    "units": "W m-2"
   },
   "rsutcs": {
     "var_name": "FSUTOAC",
-    "units": "W m-2",
-    "positive": "up"
+    "units": "W m-2"
   },
   "rtmt": {
     "var_name": "FSNT-FLNT",
-    "units": "W m-2",
-    "positive": "down"
+    "units": "W m-2"
   },
   "sci": {
     "var_name": "XXX",
@@ -198,13 +213,11 @@
   },
   "tauu": {
     "var_name": "TAUX",
-    "units": "Pa",
-    "positive": "down"
+    "units": "Pa"
   },
   "tauv": {
     "var_name": "TAUY",
-    "units": "Pa",
-    "positive": "down"
+    "units": "Pa"
   },
   "ts": {
     "var_name": "TS",

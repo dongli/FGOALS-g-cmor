@@ -1,0 +1,16 @@
+&cmor_fgoals_g
+experiment_id            = 'amip'
+experiment_path          = '/public1/wab/CMIP6/run/amip-ee14d-04-re/run'
+realization_index        = '1'
+initialization_index     = '1'
+physics_index            = '1'
+forcing_index            = '1'
+case_id                  = 'amip-ee14d-04-re'
+frequencies              = 'Amon' , 'day'        , '6hrLev'     , '6hrPlev'    , '3hr'
+gamil_hist_tags          = 'h0'   , 'h1'         , 'h2'         , 'h3'         , 'h4'
+gamil_steps_per_file     = 1      , 30           , 120          , 120          , 240
+gamil_time_formats       = '%Y-%m', '%Y-%m-%d-%s', '%Y-%m-%d-%s', '%Y-%m-%d-%s', '%Y-%m-%d-%s'
+output_interval_in_years = 10     , 1            , 1            , 1            , 1
+start_time               = '1979'
+end_time                 = '2017'
+/

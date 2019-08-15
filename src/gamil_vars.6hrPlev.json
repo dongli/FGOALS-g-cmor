@@ -1,8 +1,4 @@
 {
-  "ps": {
-    "var_name": "PS",
-    "units": "Pa"
-  },
   "hurs": {
     "var_name": "RHREFHT",
     "units": "1"

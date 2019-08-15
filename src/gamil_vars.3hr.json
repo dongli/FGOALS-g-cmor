@@ -8,7 +8,7 @@
     "units": "m s-1"
   },
   "prsn": {
-    "var_name": "XXX",
+    "var_name": "PRECSC+PRECSL",
     "units": "m s-1"
   },
   "tas": {

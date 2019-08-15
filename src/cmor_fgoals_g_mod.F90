@@ -47,8 +47,9 @@ module cmor_fgoals_g_mod
   integer, parameter :: ilev_axis_idx      = 7
   integer, parameter :: plev19_axis_idx    = 8
   integer, parameter :: plev8_axis_idx     = 9
-  integer, parameter :: height2m_axis_idx  = 10
-  integer, parameter :: height10m_axis_idx = 11
+  integer, parameter :: plev4_axis_idx     = 10
+  integer, parameter :: height2m_axis_idx  = 11
+  integer, parameter :: height10m_axis_idx = 12
 
   type var_info_type
     integer var_id
@@ -67,6 +68,7 @@ module cmor_fgoals_g_mod
     integer, dimension(3) :: axis_ids_2d           ! lon, lat, time
     integer, dimension(4) :: axis_ids_3d_plev19    ! lon, lat, plev19, time
     integer, dimension(4) :: axis_ids_3d_plev8     ! lon, lat, plev8 , time
+    integer, dimension(4) :: axis_ids_3d_plev4     ! lon, lat, plev4 , time
     integer, dimension(4) :: axis_ids_3d_full      ! lon, lat, lev   , time
     integer, dimension(4) :: axis_ids_3d_half      ! lon, lat, ilev  , time
     integer, dimension(4) :: axis_ids_2d_height2m  ! lon, lat, time  , height2m
@@ -76,7 +78,7 @@ module cmor_fgoals_g_mod
   type model_info_type
     character(50) :: time_units = 'N/A'
     integer table_id
-    integer axis_ids(11) ! See axis indices for ordering.
+    integer axis_ids(12) ! See axis indices for ordering.
     type(axis_bundle_type) axes_time  ! Axes with time axis
     type(axis_bundle_type) axes_time1 ! Axes with time1 axis
     type(axis_bundle_type) axes_time2 ! Axes with time2 axis
@@ -108,6 +110,10 @@ module cmor_fgoals_g_mod
   real(8), parameter :: cmor_plev8(8) = [        &
     100000.0d0, 85000.0d0, 70000.0d0, 50000.0d0, &
     25000.0d0, 10000.0d0, 5000.0d0, 1000.0d0     &
+  ]
+
+  real(8), parameter :: cmor_plev4(4) = [        &
+    92500.0d0, 85000.0d0, 50000.0d0, 25000.0d0   &
   ]
 
 contains
@@ -205,6 +211,7 @@ contains
     real(8), allocatable, dimension(:,:,:) :: array_3d_half
     real(8), allocatable, dimension(:,:,:) :: array_3d_plev19
     real(8), allocatable, dimension(:,:,:) :: array_3d_plev8
+    real(8), allocatable, dimension(:,:,:) :: array_3d_plev4
     character(256) file_prefix, file_path
     logical file_exist
 
@@ -218,6 +225,7 @@ contains
     allocate(array_3d_half  (size(gamil_lon),size(gamil_lat),size(gamil_lev_bnds)))
     allocate(array_3d_plev19(size(gamil_lon),size(gamil_lat),size(cmor_plev19)))
     allocate(array_3d_plev8 (size(gamil_lon),size(gamil_lat),size(cmor_plev8 )))
+    allocate(array_3d_plev4 (size(gamil_lon),size(gamil_lat),size(cmor_plev4 )))
 
     call gamil%create_gamil_cmor_objects(frequency)
 
@@ -352,6 +360,19 @@ contains
               ntimes_passed=1                    , &
               time_vals=time_axis_value          , &
               time_bnds=time_axis_bnds)
+          else if (any(gamil%var_info(ivar)%dims == 'plev4')) then
+            call gamil_reader_get_var(             &
+              gamil%var_info(ivar)%model_var_name, &
+              array_3d_plev4                     , &
+              time_step=time_step                , &
+              plev=cmor_plev4                    , &
+              use_log_linear=gamil%var_info(ivar)%vinterp == 'log_linear')
+            ierr = cmor_write(                     &
+              var_id=gamil%var_info(ivar)%var_id , &
+              data=array_3d_plev4                , &
+              ntimes_passed=1                    , &
+              time_vals=time_axis_value          , &
+              time_bnds=time_axis_bnds)
           else if (any(gamil%var_info(ivar)%dims == 'height2m') .or. any(gamil%var_info(ivar)%dims == 'height10m')) then
             call gamil_reader_get_var(gamil%var_info(ivar)%model_var_name, array_2d, time_step=time_step)
             ierr = cmor_write(                     &
@@ -378,6 +399,7 @@ contains
     deallocate(array_3d_half  )
     deallocate(array_3d_plev19)
     deallocate(array_3d_plev8 )
+    deallocate(array_3d_plev4 )
 
   end subroutine gamil_write
 
@@ -482,6 +504,7 @@ contains
     integer, dimension(4) :: local_axis_ids_3d_half
     integer, dimension(4) :: local_axis_ids_3d_plev19
     integer, dimension(4) :: local_axis_ids_3d_plev8
+    integer, dimension(4) :: local_axis_ids_3d_plev4
     integer, dimension(4) :: local_axis_ids_2d_height2m
     integer, dimension(4) :: local_axis_ids_2d_height10m
     type(json_value), pointer :: var
@@ -578,6 +601,13 @@ contains
       units='Pa'                              , &
       coord_vals=cmor_plev8)
 
+    ! Standard 4 pressure level axis
+    this%axis_ids(plev4_axis_idx) = cmor_axis(  &
+      table_entry='plev4'                     , &
+      length=size(cmor_plev4)                 , &
+      units='Pa'                              , &
+      coord_vals=cmor_plev4)
+
     ! Height 2m level axis
     this%axis_ids(height2m_axis_idx) = cmor_axis( &
       table_entry='height2m'                    , &
@@ -607,6 +637,12 @@ contains
       this%axis_ids(lon_axis_idx)         , &
       this%axis_ids(lat_axis_idx)         , &
       this%axis_ids(plev8_axis_idx)       , &
+      this%axis_ids(time_axis_idx)          &
+    ]
+    this%axes_time%axis_ids_3d_plev4 = [    &
+      this%axis_ids(lon_axis_idx)         , &
+      this%axis_ids(lat_axis_idx)         , &
+      this%axis_ids(plev4_axis_idx)       , &
       this%axis_ids(time_axis_idx)          &
     ]
     this%axes_time%axis_ids_3d_full = [     &
@@ -650,6 +686,12 @@ contains
       this%axis_ids(plev8_axis_idx)       , &
       this%axis_ids(time1_axis_idx)         &
     ]
+    this%axes_time1%axis_ids_3d_plev4 =   [ &
+      this%axis_ids(lon_axis_idx)         , &
+      this%axis_ids(lat_axis_idx)         , &
+      this%axis_ids(plev4_axis_idx)       , &
+      this%axis_ids(time1_axis_idx)         &
+    ]
     this%axes_time1%axis_ids_3d_full = [    &
       this%axis_ids(lon_axis_idx)         , &
       this%axis_ids(lat_axis_idx)         , &
@@ -689,6 +731,12 @@ contains
       this%axis_ids(lon_axis_idx)          , &
       this%axis_ids(lat_axis_idx)          , &
       this%axis_ids(plev8_axis_idx)        , &
+      this%axis_ids(time2_axis_idx)          &
+    ]
+    this%axes_time2%axis_ids_3d_plev4 =    [ &
+      this%axis_ids(lon_axis_idx)          , &
+      this%axis_ids(lat_axis_idx)          , &
+      this%axis_ids(plev4_axis_idx)        , &
       this%axis_ids(time2_axis_idx)          &
     ]
     this%axes_time2%axis_ids_3d_full = [     &
@@ -736,6 +784,7 @@ contains
         local_axis_ids_3d_half      = this%axes_time1%axis_ids_3d_half
         local_axis_ids_3d_plev19    = this%axes_time1%axis_ids_3d_plev19
         local_axis_ids_3d_plev8     = this%axes_time1%axis_ids_3d_plev8
+        local_axis_ids_3d_plev4     = this%axes_time1%axis_ids_3d_plev4
         local_axis_ids_2d_height2m  = this%axes_time1%axis_ids_2d_height2m
         local_axis_ids_2d_height10m = this%axes_time1%axis_ids_2d_height10m
       else if (any(this%var_info(i)%dims == 'time2')) then
@@ -744,6 +793,7 @@ contains
         local_axis_ids_3d_half      = this%axes_time2%axis_ids_3d_half
         local_axis_ids_3d_plev19    = this%axes_time2%axis_ids_3d_plev19
         local_axis_ids_3d_plev8     = this%axes_time2%axis_ids_3d_plev8
+        local_axis_ids_3d_plev4     = this%axes_time2%axis_ids_3d_plev4
         local_axis_ids_2d_height2m  = this%axes_time2%axis_ids_2d_height2m
         local_axis_ids_2d_height10m = this%axes_time2%axis_ids_2d_height10m
       else
@@ -752,6 +802,7 @@ contains
         local_axis_ids_3d_half      = this%axes_time%axis_ids_3d_half
         local_axis_ids_3d_plev19    = this%axes_time%axis_ids_3d_plev19
         local_axis_ids_3d_plev8     = this%axes_time%axis_ids_3d_plev8
+        local_axis_ids_3d_plev4     = this%axes_time%axis_ids_3d_plev4
         local_axis_ids_2d_height2m  = this%axes_time%axis_ids_2d_height2m
         local_axis_ids_2d_height10m = this%axes_time%axis_ids_2d_height10m
       end if
@@ -792,6 +843,12 @@ contains
             table_entry=this%var_info(i)%table_var_name, &
             units=this%var_info(i)%units               , &
             axis_ids=local_axis_ids_3d_plev8           , &
+            positive=this%var_info(i)%positive)
+        else if (any(this%var_info(i)%dims == 'plev4')) then
+          this%var_info(i)%var_id = cmor_variable(       &
+            table_entry=this%var_info(i)%table_var_name, &
+            units=this%var_info(i)%units               , &
+            axis_ids=local_axis_ids_3d_plev4           , &
             positive=this%var_info(i)%positive)
         else if (any(this%var_info(i)%dims == 'height2m')) then
           this%var_info(i)%var_id = cmor_variable(       &
