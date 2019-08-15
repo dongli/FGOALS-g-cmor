@@ -6,7 +6,7 @@ frequencies              = 'Amon'
 gamil_hist_tags          = 'h0'
 gamil_steps_per_file     = 1
 gamil_time_formats       = '%Y-%m'
+output_interval_in_years = 10
 start_time               = '0200'
 end_time                 = '0900'
-output_interval_in_years = 10
 /

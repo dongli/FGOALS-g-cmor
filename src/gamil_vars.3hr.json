@@ -81,7 +81,7 @@
     "units": "1"
   },
   "rsdsdiff": {
-    "var_name": "SOLLD+SOLSD",
+    "var_name": "SOLSD",
     "units": "W m-2",
     "positive": "down"
   }
