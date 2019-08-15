@@ -1,0 +1,12 @@
+&cmor_fgoals_g
+experiment_id            = 'piControl'
+experiment_path          = '/public1/wab/CMIP6/run/hybrid-97-c0/hybrid-97-c0/run'
+case_id                  = 'hybrid-97-c0'
+frequencies              = 'Amon'
+gamil_hist_tags          = 'h0'
+gamil_steps_per_file     = 1
+gamil_time_formats       = '%Y-%m'
+start_time               = '0200'
+end_time                 = '0900'
+output_interval_in_years = 10
+/
