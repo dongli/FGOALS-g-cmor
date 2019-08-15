@@ -163,6 +163,7 @@ contains
         call log_warning('Variable TGCLDLWP+TGCLDIWP cannot be outputted!')
       end if
     case ('FLNS')
+      if (io_has_var('gamil', 'FLNS')) return
       if (io_has_var('gamil', 'FLUS') .and. io_has_var('gamil', 'FLDS')) then
         call io_input('gamil', 'FLUS', array, time_step=time_step)
         call io_input('gamil', 'FLDS', buf_2d, time_step=time_step)

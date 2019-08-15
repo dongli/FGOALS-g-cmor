@@ -5,11 +5,13 @@
   },
   "hfls": {
     "var_name": "LHFLX",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "hfss": {
     "var_name": "SHFLX",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "hur": {
     "var_name": "RELHUM",
@@ -53,7 +55,8 @@
   },
   "rlds": {
     "var_name": "FLDS",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "down"
   },
   "rls": {
     "var_name": "FLNS",
@@ -62,23 +65,28 @@
   },
   "rlus": {
     "var_name": "FLUS",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "rlut": {
     "var_name": "FLUTOA",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "rsds": {
     "var_name": "FSDS",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "down"
   },
   "rss": {
     "var_name": "FSNS",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "down"
   },
   "rsus": {
     "var_name": "FSUS",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "sfcWind": {
     "var_name": "WIND10M",

@@ -53,7 +53,7 @@ contains
 
     do i = 1, size(frequencies)
       if (frequencies(i) == '') cycle
-      if (.not. any(['Amon  ','day   ', '6hrLev', '3hr   '] == frequencies(i))) then
+      if (.not. any(['Amon   ','day    ', '6hrLev ', '6hrPlev', '3hr    '] == frequencies(i))) then
         call log_error('Invalid namelist option frequency "' // trim(frequencies(i)) // '"! Choose Amon, 3hr, 6hrLev and day.')
       end if
     end do

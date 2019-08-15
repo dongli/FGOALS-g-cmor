@@ -60,6 +60,7 @@ module cmor_fgoals_g_mod
     character(4 ) :: positive = ''
     character(10), allocatable :: dims(:)
     character(10) :: time_method = 'mean'
+    integer zfactor_id
   contains
     final :: var_info_final
   end type var_info_type
@@ -73,6 +74,7 @@ module cmor_fgoals_g_mod
     integer, dimension(4) :: axis_ids_3d_half      ! lon, lat, ilev  , time
     integer, dimension(4) :: axis_ids_2d_height2m  ! lon, lat, time  , height2m
     integer, dimension(4) :: axis_ids_2d_height10m ! lon, lat, time  , height10m
+    integer zfactor_id
   end type axis_bundle_type
 
   type model_info_type
@@ -82,7 +84,6 @@ module cmor_fgoals_g_mod
     type(axis_bundle_type) axes_time  ! Axes with time axis
     type(axis_bundle_type) axes_time1 ! Axes with time1 axis
     type(axis_bundle_type) axes_time2 ! Axes with time2 axis
-    integer zfactor_id
     ! Variables
     integer num_var
     type(var_info_type), allocatable :: var_info(:)
@@ -312,7 +313,7 @@ contains
               time_vals=time_axis_value          , &
               time_bnds=time_axis_bnds)
             ierr = cmor_write(                     &
-              var_id=gamil%zfactor_id            , &
+              var_id=gamil%var_info(ivar)%zfactor_id, &
               data=ps                            , &
               ntimes_passed=1                    , &
               time_vals=time_axis_value          , &
@@ -328,7 +329,7 @@ contains
               time_vals=time_axis_value          , &
               time_bnds=time_axis_bnds)
             ierr = cmor_write(                     &
-              var_id=gamil%zfactor_id            , &
+              var_id=gamil%var_info(ivar)%zfactor_id, &
               data=ps                            , &
               ntimes_passed=1                    , &
               time_vals=time_axis_value          , &
@@ -622,6 +623,14 @@ contains
       units ='m'                                 , &
       coord_vals=[10])
 
+    ! Constant zfactor
+    ierr = cmor_zfactor(                     &
+      zaxis_id=this%axis_ids(lev_axis_idx) , &
+      zfactor_name='ptop'                  , &
+      units='Pa'                           , &
+      zfactor_values=gamil_ptop)
+
+    ! time
     this%axes_time%axis_ids_2d = [          &
       this%axis_ids(lon_axis_idx)         , &
       this%axis_ids(lat_axis_idx)         , &
@@ -669,6 +678,12 @@ contains
       this%axis_ids(time_axis_idx)        , &
       this%axis_ids(height10m_axis_idx)     &
     ]
+    this%axes_time%zfactor_id = cmor_zfactor( &
+      zaxis_id=this%axis_ids(lev_axis_idx)  , &
+      zfactor_name='ps'                     , &
+      units='Pa'                            , &
+      axis_ids=this%axes_time%axis_ids_2d)
+    ! time1
     this%axes_time1%axis_ids_2d = [         &
       this%axis_ids(lon_axis_idx)         , &
       this%axis_ids(lat_axis_idx)         , &
@@ -716,6 +731,12 @@ contains
       this%axis_ids(time1_axis_idx)        , &
       this%axis_ids(height10m_axis_idx)      &
     ]
+    this%axes_time1%zfactor_id = cmor_zfactor( &
+      zaxis_id=this%axis_ids(lev_axis_idx)   , &
+      zfactor_name='ps1'                     , &
+      units='Pa'                             , &
+      axis_ids=this%axes_time1%axis_ids_2d)
+    ! time2
     this%axes_time2%axis_ids_2d = [          &
       this%axis_ids(lon_axis_idx)          , &
       this%axis_ids(lat_axis_idx)          , &
@@ -763,17 +784,11 @@ contains
       this%axis_ids(time2_axis_idx)        , &
       this%axis_ids(height10m_axis_idx)      &
     ]
-    ierr = cmor_zfactor(                     &
-      zaxis_id=this%axis_ids(lev_axis_idx) , &
-      zfactor_name='ptop'                  , &
-      units='Pa'                           , &
-      zfactor_values=gamil_ptop)
-
-    this%zfactor_id = cmor_zfactor(          &
-      zaxis_id=this%axis_ids(lev_axis_idx) , &
-      zfactor_name='ps'                    , &
-      units='Pa'                           , &
-      axis_ids=this%axes_time%axis_ids_2d)
+    this%axes_time2%zfactor_id = cmor_zfactor( &
+      zaxis_id=this%axis_ids(lev_axis_idx)   , &
+      zfactor_name='ps2'                     , &
+      units='Pa'                             , &
+      axis_ids=this%axes_time2%axis_ids_2d)
 
     do i = 1, this%num_var
       if (this%var_info(i)%model_var_name == 'XXX') cycle
@@ -787,6 +802,7 @@ contains
         local_axis_ids_3d_plev4     = this%axes_time1%axis_ids_3d_plev4
         local_axis_ids_2d_height2m  = this%axes_time1%axis_ids_2d_height2m
         local_axis_ids_2d_height10m = this%axes_time1%axis_ids_2d_height10m
+        this%var_info(i)%zfactor_id = this%axes_time1%zfactor_id
       else if (any(this%var_info(i)%dims == 'time2')) then
         local_axis_ids_2d           = this%axes_time2%axis_ids_2d
         local_axis_ids_3d_full      = this%axes_time2%axis_ids_3d_full
@@ -796,6 +812,7 @@ contains
         local_axis_ids_3d_plev4     = this%axes_time2%axis_ids_3d_plev4
         local_axis_ids_2d_height2m  = this%axes_time2%axis_ids_2d_height2m
         local_axis_ids_2d_height10m = this%axes_time2%axis_ids_2d_height10m
+        this%var_info(i)%zfactor_id = this%axes_time2%zfactor_id
       else
         local_axis_ids_2d           = this%axes_time%axis_ids_2d
         local_axis_ids_3d_full      = this%axes_time%axis_ids_3d_full
@@ -805,6 +822,7 @@ contains
         local_axis_ids_3d_plev4     = this%axes_time%axis_ids_3d_plev4
         local_axis_ids_2d_height2m  = this%axes_time%axis_ids_2d_height2m
         local_axis_ids_2d_height10m = this%axes_time%axis_ids_2d_height10m
+        this%var_info(i)%zfactor_id = this%axes_time%zfactor_id
       end if
       select case (size(this%var_info(i)%dims))
       case (3) ! 2D variable

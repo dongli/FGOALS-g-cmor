@@ -69,11 +69,13 @@
   },
   "hfls": {
     "var_name": "LHFLX",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "hfss": {
     "var_name": "SHFLX",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "hur": {
     "var_name": "RELHUM",
@@ -93,7 +95,8 @@
   },
   "mc": {
     "var_name": "CMFMC",
-    "units": "kg m-2 s-1"
+    "units": "kg m-2 s-1",
+    "positive": "up"
   },
   "o3": {
     "var_name": "O3VMR",
@@ -101,6 +104,7 @@
   },
   "o3Clim": {
     "var_name": "XXX",
+    "units": ""
   },
   "pfull": {
     "var_name": "<pfull>",
@@ -136,55 +140,68 @@
   },
   "rlds": {
     "var_name": "FLDS",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "down"
   },
   "rldscs": {
     "var_name": "FLDSC",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "down"
   },
   "rlus": {
     "var_name": "FLUS",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "rlut": {
     "var_name": "FLUTOA",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "rlutcs": {
     "var_name": "FLUTOAC",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "rsds": {
     "var_name": "FSDS",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "down"
   },
   "rsdscs": {
     "var_name": "FSDSC",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "down"
   },
   "rsdt": {
     "var_name": "FSDTOA",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "down"
   },
   "rsus": {
     "var_name": "FSUS",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "rsuscs": {
     "var_name": "FSUSC",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "rsut": {
     "var_name": "FSUTOA",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "rsutcs": {
     "var_name": "FSUTOAC",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "up"
   },
   "rtmt": {
     "var_name": "FSNT-FLNT",
-    "units": "W m-2"
+    "units": "W m-2",
+    "positive": "down"
   },
   "sci": {
     "var_name": "XXX",
@@ -213,11 +230,13 @@
   },
   "tauu": {
     "var_name": "TAUX",
-    "units": "Pa"
+    "units": "Pa",
+    "positive": "down"
   },
   "tauv": {
     "var_name": "TAUY",
-    "units": "Pa"
+    "units": "Pa",
+    "positive": "down"
   },
   "ts": {
     "var_name": "TS",
