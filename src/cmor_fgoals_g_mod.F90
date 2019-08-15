@@ -144,12 +144,13 @@ contains
       if (frequencies(i) /= '') then
         call gamil%init(trim(table_root) // '/CMIP6_' // trim(frequencies(i)) // '.json', &
                         trim(project_root) // '/src/gamil_vars.' // trim(frequencies(i)) // '.json')
-        call gamil_write(frequencies(i),          &
-                         gamil_hist_tags(i),      &
-                         gamil_steps_per_file(i), &
-                         gamil_time_formats(i),   &
-                         start_time_str(i),       &
-                         end_time_str(i))
+        call gamil_write(frequencies(i)             , &
+                         gamil_hist_tags(i)         , &
+                         gamil_steps_per_file(i)    , &
+                         gamil_time_formats(i)      , &
+                         start_time_str(i)          , &
+                         end_time_str(i)            , &
+                         output_interval_in_years(i))
       end if
     end do
 
@@ -183,7 +184,7 @@ contains
 
   end subroutine handle_cmor_error
 
-  subroutine gamil_write(frequency, hist_tag, steps_per_file, time_format, start_time_str, end_time_str)
+  subroutine gamil_write(frequency, hist_tag, steps_per_file, time_format, start_time_str, end_time_str, output_interval_in_years)
 
     character(*), intent(in) :: frequency
     character(*), intent(in) :: hist_tag
@@ -191,6 +192,7 @@ contains
     character(*), intent(in) :: time_format
     character(*), intent(in) :: start_time_str
     character(*), intent(in) :: end_time_str
+    integer     , intent(in) :: output_interval_in_years
 
     type(datetime_type) time, time0
     type(timedelta_type) dt
@@ -243,7 +245,7 @@ contains
       last_year = time%year
       do itime = 1, num_time
         ! Close previous file.
-        if (time%year /= last_year) then
+        if (time%year /= last_year .and. mod(time%year - last_year, output_interval_in_years) == 0) then
           ierr = cmor_close(gamil%var_info(ivar)%var_id, preserve=1)
           last_year = time%year
         end if
@@ -270,8 +272,10 @@ contains
             if (frequency /= 'Amon' .and. itime == 1) time_step = time_step + 1
           end if
           call gamil_reader_open(file_path)
-          ! call log_notice('Open ' // trim(file_path) // '.')
-          if (frequency /= 'Amon') time = time - dt ! Fix for inconsistency of time in file name.
+          if (frequency /= 'Amon') then
+            time = time - dt ! Fix for inconsistency of time in file name.
+            call log_notice('Open ' // trim(file_path) // '.')
+          end if
         end if
         call log_print(time%isoformat() // ' ' // trim(to_string(time_step)))
         call gamil_reader_get_var('time'     , time_axis_value(1), time_step=time_step)
@@ -431,6 +435,10 @@ contains
         this%var_info(ivar)%time_method = 'mean'
       else if (string_count(str, 'time: point') > 0) then
         this%var_info(ivar)%time_method = 'point'
+      else if (string_count(str, 'time: maximum') > 0) then
+        this%var_info(ivar)%time_method = 'maximum'
+      else if (string_count(str, 'time: minimum') > 0) then
+        this%var_info(ivar)%time_method = 'minimum'
       else
         call log_error('Unsupported time_method ' // trim(str) // ' of ' // trim(this%var_info(ivar)%table_var_name) // '!')
       end if

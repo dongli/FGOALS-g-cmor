@@ -19,6 +19,7 @@ module namelist_mod
   character(30) :: start_time(10) = ''
   character(30) :: end_time(10) = ''
   character(10) :: selected_vars(100) = ''
+  integer       :: output_interval_in_years(10) = 1
 
   namelist /cmor_fgoals_g/ &
     experiment_id        , &
@@ -35,7 +36,8 @@ module namelist_mod
     gamil_time_formats   , &
     start_time           , &
     end_time             , &
-    selected_vars
+    selected_vars        , &
+    output_interval_in_years
 
 contains
 

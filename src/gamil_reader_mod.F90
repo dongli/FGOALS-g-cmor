@@ -9,6 +9,7 @@ module gamil_reader_mod
   private
 
   public gamil_reader_open
+  public gamil_reader_has_var
   public gamil_reader_get_grids
   public gamil_reader_get_var
   public gamil_reader_get_att
@@ -80,6 +81,14 @@ contains
     if (.not. allocated(buf_3d  )) allocate(buf_3d  (num_lon,num_lat,num_lev  ))
 
   end subroutine gamil_reader_open
+
+  logical function gamil_reader_has_var(var_name) result(res)
+
+    character(*), intent(in) :: var_name
+
+    res = io_has_var('gamil', var_name)
+
+  end function gamil_reader_has_var
 
   subroutine gamil_reader_get_grids()
 

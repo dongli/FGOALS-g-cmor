@@ -1,0 +1,70 @@
+{
+  "ps": {
+    "var_name": "PS",
+    "units": "Pa"
+  },
+  "hurs": {
+    "var_name": "RHREFHT",
+    "units": "1"
+  },
+  "hus4": {
+    "var_name": "Q",
+    "units": "kg kg-1"
+  },
+  "pr": {
+    "var_name": "PRECT",
+    "units": "m s-1"
+  },
+  "prhmax": {
+    "var_name": "PRECTMX",
+    "units": "m s-1"
+  },
+  "psl": {
+    "var_name": "PSL",
+    "units": "Pa"
+  },
+  "rv850": {
+    "var_name": "XXX",
+    "units": "s-1"
+  },
+  "sfcWind": {
+    "var_name": "WIND10M",
+    "units": "m s-1"
+  },
+  "tas": {
+    "var_name": "TREFHT",
+    "units": "K"
+  },
+  "ua100m": {
+    "var_name": "XXX",
+    "units": "m s-1"
+  },
+  "uas": {
+    "var_name": "XXX",
+    "units": "m s-1"
+  },
+  "va100m": {
+    "var_name": "XXX",
+    "units": "m s-1"
+  },
+  "vas": {
+    "var_name": "XXX",
+    "units": "m s-1"
+  },
+  "wap4": {
+    "var_name": "OMEGA",
+    "units": "Pa s-1"
+  },
+  "wsgmax100m": {
+    "var_name": "XXX",
+    "units": "m s-1"
+  },
+  "wsgmax10m": {
+    "var_name": "XXX",
+    "units": "m s-1"
+  },
+  "zg1000": {
+    "var_name": "XXX",
+    "units": "m s-1"
+  }
+}
