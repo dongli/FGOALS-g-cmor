@@ -49,7 +49,7 @@ module gamil_reader_mod
   real(8), allocatable :: lev(:)
   real(8), allocatable :: lev_bnds(:)
 
-  real(8), parameter :: ptop = 219.4
+  real(8), parameter :: ptop = 2.194
   real(8), allocatable, dimension(:    ) :: pfull
   real(8), allocatable, dimension(:    ) :: phalf
   real(8), allocatable, dimension(:,:  ) :: ps
