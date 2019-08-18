@@ -49,7 +49,7 @@ module gamil_reader_mod
   real(8), allocatable :: lev(:)
   real(8), allocatable :: lev_bnds(:)
 
-  real(8), parameter :: ptop = 2.194
+  real(8), parameter :: ptop = 219.4 ! Pa
   real(8), allocatable, dimension(:    ) :: pfull
   real(8), allocatable, dimension(:    ) :: phalf
   real(8), allocatable, dimension(:,:  ) :: ps
@@ -141,7 +141,7 @@ contains
     end if
 
     select case (var_name)
-    case ('PRECT', 'PRECC')
+    case ('PRECT', 'PRECC', 'PRECTMX')
       array = array * 1000
     case ('PRECSC+PRECSL')
       if (io_has_var('gamil', 'PRECSC') .and. io_has_var('gamil', 'PRECSL')) then
@@ -208,9 +208,9 @@ contains
         do i = 1, num_lon
           pfull = lev * (ps(i,j) - ptop) + ptop
           if (present(use_log_linear) .and. use_log_linear) then
-            call interp_log_linear(pfull, buf_3d(i,j,:), plev, array(i,j,:), allow_extrap=.false.)
+            call interp_log_linear(pfull, buf_3d(i,j,:), plev, array(i,j,:), left_extrap=.true., right_extrap=.false.)
           else
-            call interp_linear(pfull, buf_3d(i,j,:), plev, array(i,j,:), allow_extrap=.false.)
+            call interp_linear(pfull, buf_3d(i,j,:), plev, array(i,j,:), left_extrap=.true., right_extrap=.false.)
           end if
         end do
       end do

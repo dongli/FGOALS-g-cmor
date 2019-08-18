@@ -109,45 +109,53 @@ contains
 
   end subroutine interp_bilinear
 
-  subroutine interp_linear(x1, data1, x2, data2, allow_extrap, ierr)
+  subroutine interp_linear(x1, data1, x2, data2, left_extrap, right_extrap, ierr)
 
     real(8), intent(in) :: x1(:), data1(:), x2(:)
     real(8), intent(out) :: data2(:)
-    logical, intent(in) :: allow_extrap
+    logical, intent(in) :: left_extrap
+    logical, intent(in) :: right_extrap
     integer, intent(out), optional :: ierr
 
     integer nx1, nx2
-    integer size(1), i, ii
+    integer i, ii
     integer, allocatable :: i1(:), i2(:)
     real(8), allocatable :: wgt1(:), wgt2(:)
-    real(8) tmp1, tmp2
+    logical out_bound
 
-    size = shape(x1); nx1 = size(1)
-    size = shape(x2); nx2 = size(1)
+    nx1 = size(x1)
+    nx2 = size(x2)
 
-    allocate(i1(nx2), i2(nx2))
-    allocate(wgt1(nx2), wgt2(nx2))
+    allocate(i1(nx2))
+    allocate(i2(nx2))
+    allocate(wgt1(nx2))
+    allocate(wgt2(nx2))
 
     do i = 1, nx2
-      do ii = 1, nx1-1
-        if ((x2(i) >= x1(ii) .and. x2(i) < x1(ii+1))) then
+      do ii = 1, nx1 - 1
+        if ((x2(i) >= x1(ii) .and. x2(i) <= x1(ii + 1))) then
+          out_bound = .false.
           i1(i) = ii
-          i2(i) = ii+1
+          i2(i) = ii + 1
           exit
         else if (x2(i) < x1(1)) then
-          if (allow_extrap) then
+          if (left_extrap) then
+            out_bound = .false.
             i1(i) = 1
             i2(i) = 2
           else
+            out_bound = .true.
             i1(i) = 1
             i2(i) = 1
           end if
           exit
-        else if (x2(i) >= x1(nx1)) then
-          if (allow_extrap) then
-            i1(i) = nx1-1
+        else if (x2(i) > x1(nx1)) then
+          if (right_extrap) then
+            out_bound = .false.
+            i1(i) = nx1 - 1
             i2(i) = nx1
           else
+            out_bound = .true.
             i1(i) = nx1
             i2(i) = nx1
           end if
@@ -158,28 +166,33 @@ contains
         wgt1(i) = 0.5d0
         wgt2(i) = 0.5d0
       else
-        tmp1 = x1(i1(i))
-        tmp2 = x1(i2(i))
-        wgt1(i) = (tmp2-x2(i))/(tmp2-tmp1)
-        wgt2(i) = (x2(i)-tmp1)/(tmp2-tmp1)
+        wgt1(i) = (x1(i2(i)) - x2(i)) / (x1(i2(i)) - x1(i1(i)))
+        wgt2(i) = (x2(i) - x1(i1(i))) / (x1(i2(i)) - x1(i1(i)))
       end if
+      if (out_bound) wgt1(i) = missing_value
     end do
 
     do i = 1, nx2
-      data2(i) = data1(i1(i))*wgt1(i)+data1(i2(i))*wgt2(i)
+      if (wgt1(i) == missing_value) then
+        data2(i) = missing_value
+      else
+        data2(i) = data1(i1(i)) * wgt1(i) + data1(i2(i)) * wgt2(i)
+      end if
     end do
 
   end subroutine interp_linear
 
-  subroutine interp_log_linear(x1, data1, x2, data2, allow_extrap, ierr)
+  subroutine interp_log_linear(x1, data1, x2, data2, left_extrap, right_extrap, ierr)
 
     real(8), intent(in) :: x1(:), data1(:), x2(:)
     real(8), intent(out) :: data2(:)
-    logical, intent(in) :: allow_extrap
+    logical, intent(in) :: left_extrap
+    logical, intent(in) :: right_extrap
+    logical debug
     integer, intent(out), optional :: ierr
 
     integer nx1, nx2
-    integer size(1), i, ii
+    integer i, ii
     integer, allocatable :: i1(:), i2(:)
     real(8), allocatable :: wgt1(:), wgt2(:)
     real(8) tmp1, tmp2
@@ -195,35 +208,39 @@ contains
       end if
     end if
 
-    size = shape(x1); nx1 = size(1)
-    size = shape(x2); nx2 = size(1)
+    nx1 = size(x1)
+    nx2 = size(x2)
 
-    allocate(i1(nx2), i2(nx2))
-    allocate(wgt1(nx2), wgt2(nx2))
+    allocate(i1(nx2))
+    allocate(i2(nx2))
+    allocate(wgt1(nx2))
+    allocate(wgt2(nx2))
 
     do i = 1, nx2
-      do ii = 1, nx1-1
-        if ((x2(i) >= x1(ii) .and. x2(i) < x1(ii+1))) then
+      do ii = 1, nx1 - 1
+        if ((x2(i) >= x1(ii) .and. x2(i) <= x1(ii+1))) then
           out_bound = .false.
           i1(i) = ii
-          i2(i) = ii+1
+          i2(i) = ii + 1
           exit
         else if (x2(i) < x1(1)) then
-          out_bound = .true.
-          if (allow_extrap) then
+          if (left_extrap) then
+            out_bound = .false.
             i1(i) = 1
             i2(i) = 2
           else
+            out_bound = .true.
             i1(i) = 1
             i2(i) = 1
           end if
           exit
-        else if (x2(i) >= x1(nx1)) then
-          out_bound = .true.
-          if (allow_extrap) then
-            i1(i) = nx1-1
+        else if (x2(i) > x1(nx1)) then
+          if (right_extrap) then
+            out_bound = .false.
+            i1(i) = nx1 - 1
             i2(i) = nx1
           else
+            out_bound = .true.
             i1(i) = nx1
             i2(i) = nx1
           end if
@@ -234,21 +251,17 @@ contains
         wgt1(i) = 0.5d0
         wgt2(i) = 0.5d0
       else
-        tmp1 = x1(i1(i))
-        tmp2 = x1(i2(i))
-        wgt1(i) = log(tmp2/x2(i))/log(tmp2/tmp1)
-        wgt2(i) = log(x2(i)/tmp1)/log(tmp2/tmp1)
+        wgt1(i) = log(x1(i2(i)) / x2(i)) / log(x1(i2(i)) / x1(i1(i)))
+        wgt2(i) = log(x2(i) / x1(i1(i))) / log(x1(i2(i)) / x1(i1(i)))
       end if
-      if (out_bound) then
-        wgt1(i) = missing_value
-      end if
+      if (out_bound) wgt1(i) = missing_value
     end do
 
     do i = 1, nx2
       if (wgt1(i) == missing_value) then
         data2(i) = missing_value
       else
-        data2(i) = data1(i1(i))*wgt1(i)+data1(i2(i))*wgt2(i)
+        data2(i) = data1(i1(i)) * wgt1(i) + data1(i2(i)) * wgt2(i)
       end if
     end do
 
