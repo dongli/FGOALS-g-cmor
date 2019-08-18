@@ -423,6 +423,7 @@ contains
 
     call this%clear()
 
+    call json%initialize(comment_char=json_CK_'!')
     ! NOTE: Here we open TWO json files.
     ! Load table json file to inquire information.
     call f_table%load_file(filename=table_json_file_path)
@@ -826,7 +827,7 @@ contains
       end if
       select case (size(this%var_info(i)%dims))
       case (3) ! 2D variable
-        if (any(['pr  ','prc ','prl ','prsn'] == this%var_info(i)%table_var_name)) then
+        if (any(['pr    ','prc   ','prl   ','prsn  ', 'prhmax'] == this%var_info(i)%table_var_name)) then
           if (this%var_info(i)%units == 'm s-1') then
             call log_warning('Change ' // trim(this%var_info(i)%model_var_name) // ' units from m s-1 to kg m-2 s-1, 1000 will be muplied to the values.')
             this%var_info(i)%units = 'kg m-2 s-1'

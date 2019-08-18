@@ -106,11 +106,13 @@
     "units": "K"
   },
   "tasmax": {
-    "var_name": "TREFMXAV", // TREFMXAV is the same as TREFHTMX in day output.
+    ! TREFMXAV is the same as TREFHTMX in day output.
+    "var_name": "TREFMXAV",
     "units": "K"
   },
   "tasmin": {
-    "var_name": "TREFMNAV", // TREFMNAV is the same as TREFHTMN in day output.
+    ! TREFMNAV is the same as TREFHTMN in day output.
+    "var_name": "TREFMNAV",
     "units": "K"
   },
   "ua": {
