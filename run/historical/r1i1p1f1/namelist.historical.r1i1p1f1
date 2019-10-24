@@ -1,17 +1,17 @@
 &cmor_fgoals_g
 experiment_id            = 'historical'
-experiment_path          = '/public1/wab/CMIP6/run/hist-ee14d-40/run'
+experiment_path          = '/public1/wab/CMIP6/run/hist-ee14d-40-reoutput/run'
 realization_index        = '1'
 initialization_index     = '1'
 physics_index            = '1'
 forcing_index            = '1'
 branch_time_in_parent    = '134685.0'
-case_id                  = 'hist-ee14d-40'
-frequencies              = 'Amon' , 'day'        , '6hrLev'     , '3hr'
-gamil_hist_tags          = 'h0'   , 'h1'         , 'h2'         , 'h3'
-gamil_steps_per_file     = 1      , 30           , 120          , 240
-gamil_time_formats       = '%Y-%m', '%Y-%m-%d-%s', '%Y-%m-%d-%s', '%Y-%m-%d-%s'
-output_interval_in_years = 10     , 1            , 1            , 1
+case_id                  = 'hist-ee14d-40-reoutput'
+frequencies              = 'Amon' , 'day'        , '6hrLev'     , '6hrPlev'    , '3hr'
+gamil_hist_tags          = 'h0'   , 'h1'         , 'h2'         , 'h3'         , 'h4'
+gamil_steps_per_file     = 1      , 30           , 120          , 120          , 240
+gamil_time_formats       = '%Y-%m', '%Y-%m-%d-%s', '%Y-%m-%d-%s', '%Y-%m-%d-%s', '%Y-%m-%d-%s'
+output_interval_in_years = 10     , 1            , 1            , 1            , 1
 start_time               = '1850'
 end_time                 = '2017'
 /

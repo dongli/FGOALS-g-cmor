@@ -233,16 +233,16 @@ contains
     select case (frequency)
     case ('Amon')
       dt = timedelta(months=1)
-      num_time = time_period%total_seconds() / 86400 / 365 * 12
+      num_time = time_period%total_seconds() / 86400 / 365 * 12 + 12
     case ('day')
       dt = timedelta(days=1)
-      num_time = time_period%total_seconds() / 86400
+      num_time = time_period%total_seconds() / 86400 + 365
     case ('6hrLev', '6hrPlev', '6hrPlevPt')
       dt = timedelta(hours=6)
-      num_time = time_period%total_seconds() / 86400 * 4
+      num_time = time_period%total_seconds() / 86400 * 4 + 365 * 4
     case ('3hr')
       dt = timedelta(hours=3)
-      num_time = time_period%total_seconds() / 86400 * 8
+      num_time = time_period%total_seconds() / 86400 * 8 + 365 * 8
     end select
     file_prefix = trim(experiment_path) // '/' // trim(case_id) // '.gamil.' // trim(hist_tag) // '.'
     do ivar = 1, gamil%num_var
