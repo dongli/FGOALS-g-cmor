@@ -1,0 +1,16 @@
+&cmor_fgoals_g
+experiment_id            = 'lig127k'
+experiment_path          = '/public1/wab/CMIP6/run/g3_lig127k/run/Result/atm'
+realization_index        = '1'
+initialization_index     = '1'
+physics_index            = '1'
+forcing_index            = '1'
+case_id                  = 'g3_lig127k'
+frequencies              = 'Amon'  , 'day'
+gamil_hist_tags          = 'h0'    , 'h1'
+gamil_steps_per_file     = 1       , 30
+gamil_time_formats       = '%Y-%m' , '%Y-%m-%d-%s' 
+output_interval_in_years = 10      , 1
+start_time               = '0750'  , '1200'
+end_time                 = '1249'  , '1249'
+/
