@@ -215,6 +215,7 @@ contains
     real(8), allocatable, dimension(:,:,:) :: array_3d_plev4
     character(256) file_prefix, file_path
     logical file_exist
+    logical switch_restart_file
 
     start_time  = create_datetime(start_time_str, '%Y', calendar=datetime_noleap_calendar)
     end_time    = create_datetime(end_time_str  , '%Y', calendar=datetime_noleap_calendar)
@@ -252,6 +253,7 @@ contains
       time = start_time
       time_step = 1
       last_year = time%year
+      switch_restart_file = .false.
       do itime = 1, num_time
         ! Close previous file.
         if (time%year /= last_year .and. mod(time%year - last_year, output_interval_in_years) == 0) then
@@ -388,6 +390,16 @@ contains
         if (time_step > steps_per_file) then
           time_step = 1
           call gamil_reader_close()
+        else if (frequency /= 'Amon' .and. .not. switch_restart_file) then
+          ! Check if there are newer GAMIL data file other than monthly due to restart!
+          time0 = time + dt + dt
+          file_path = trim(file_prefix) // time0%format(time_format) // '.nc'
+          inquire(file=file_path, exist=file_exist)
+          if (file_exist) then
+            call log_warning('Switch to newer "restart" data ' // trim(file_path) // '!')
+            time_step = 1
+            switch_restart_file = .true.
+          end if
         end if
         time = time + dt
       end do
