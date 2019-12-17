@@ -1,6 +1,6 @@
 #!/bin/bash
 #SBATCH --job-name cmor_amip_r1
-#SBATCH --partition yuyq
+#SBATCH --partition lasg
 #SBATCH --ntasks 1
 #SBATCH --nodes 1
 #SBATCH --output=%j.stdout

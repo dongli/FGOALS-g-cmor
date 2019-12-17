@@ -12,5 +12,5 @@ gamil_steps_per_file     = 1      , 30           , 120          , 120          ,
 gamil_time_formats       = '%Y-%m', '%Y-%m-%d-%s', '%Y-%m-%d-%s', '%Y-%m-%d-%s', '%Y-%m-%d-%s'
 output_interval_in_years = 10     , 1            , 1            , 1            , 1
 start_time               = '1979'
-end_time                 = '2017'
+end_time                 = '2016'
 /

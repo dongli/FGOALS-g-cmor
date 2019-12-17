@@ -11,6 +11,6 @@ gamil_hist_tags          = 'h0'    , 'h1'
 gamil_steps_per_file     = 1       , 30
 gamil_time_formats       = '%Y-%m' , '%Y-%m-%d-%s' 
 output_interval_in_years = 10      , 1
-start_time               = '0750'  , '1200'
+start_time               = '1240'  , '1240'
 end_time                 = '1249'  , '1249'
 /
