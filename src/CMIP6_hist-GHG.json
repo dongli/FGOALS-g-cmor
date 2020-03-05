@@ -1,0 +1,74 @@
+{
+    "#note_source_type":      "explanation of what source_type is goes here",
+    "source_type":            "AOGCM",
+ 
+    "#note_experiment_id":    "CMIP6 valid experiment_ids are found in CMIP6_CV.json",
+    "experiment_id":          "hist-GHG",
+    "activity_id":            "DAMIP",
+    "sub_experiment_id":      "none",
+ 
+    "realization_index":      "1",
+    "initialization_index":   "1",
+    "physics_index":          "1",
+    "forcing_index":          "1",
+ 
+    "#note_run_variant":      "Text stored in attribute variant_info (recommended, not required description of run variant)",
+    "run_variant":            "3rd realization",
+ 
+    "parent_experiment_id":   "piControl",
+    "parent_activity_id":     "CMIP",
+    "parent_source_id":       "FGOALS-g3",
+    "parent_variant_label":   "r1i1p1f1",
+ 
+    "parent_time_units":      "days since 0001-01-01",
+    "branch_method":          "standard",
+    "branch_time_in_child":   0.0,
+    "branch_time_in_parent":  0.0,
+ 
+    "#note_institution_id":   "institution_id must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new ",
+    "institution_id":         "CAS",
+ 
+    "#note_source_id":        "source_id (model name) must be registered at https://github.com/WCRP-CMIP/CMIP6_CVs/issues/new ",
+    "source_id":              "FGOALS-g3",
+ 
+    "calendar":               "365_day",
+ 
+    "grid":                   "native atmosphere area-weighted latxlon grid (80x180 latxlon)",
+    "grid_label":             "gn",
+    "nominal_resolution":     "250 km",
+ 
+    "license":                 "CMIP6 model data produced by LASG, Institute of Atmospheric Physics, Chinese Academy of Sciences is licensed under a Creative Commons Attribution ShareAlike 4.0 International License (https://creativecommons.org/licenses). Consult https://pcmdi.llnl.gov/CMIP6/TermsOfUse for terms of use governing CMIP6 output, including citation requirements and proper acknowledgment. Further information about this data, including some limitations, can be found via the further_info_url (recorded as a global attribute in this file) and at https:///pcmdi.llnl.gov/. The data producers and data providers make no warranty, either express or implied, including, but not limited to, warranties of merchantability and fitness for a particular purpose. All liabilities arising from the supply of the information (including any liability arising in negligence) are excluded to the fullest extent permitted by law.",
+ 
+    "#output":                "Root directory for output (can be either a relative or full path)",
+    "outpath":                "CMIP6",
+ 
+    "#note_optional":         " **** The following descriptors are optional and may be set to an empty string ",  
+ 
+    "contact ":               "Lijuan Li (ljli@mail.iap.ac.cn)",
+    "history":                "",
+    "comment":                "",
+    "references":             "",
+ 
+    "#note_CV":               " **** The following will be obtained from the CV and do not need to be defined here", 
+ 
+    "sub_experiment":         "none",
+    "institution":            "",
+    "source":                 "FGOALS-g3 (2017): \naerosol: none\natmos: GAMIL3 (180 x 80 longitude/latitude; 26 levels; top level 2.194hPa)\natmosChem: none\nland: CLM4.0\nlandIce: none\nocean: LICOM3.0 (LICOM3.0, tripolar primarily 1deg; 360 x 218 longitude/latitude; 30 levels; top grid cell 0-10 m)\nocnBgchem: none\nseaIce: CICE4.0",
+ 
+    "#note_CMIP6":            " **** The following are set correctly for CMIP6 and should not normally need editing",  
+ 
+    "_control_vocabulary_file": "CMIP6_CV.json",
+    "_AXIS_ENTRY_FILE":         "CMIP6_coordinate.json",
+    "_FORMULA_VAR_FILE":        "CMIP6_formula_terms.json",
+    "_cmip6_option":           "CMIP6",
+ 
+    "mip_era":                "CMIP6",
+    "parent_mip_era":         "CMIP6",
+ 
+    "tracking_prefix":        "hdl:21.14100",
+    "_history_template":       "%s ;rewrote data to be consistent with <activity_id> for variable <variable_id> found in table <table_id>.",
+ 
+    "#output_path_template":   "Template for output path directory using tables keys or global attributes, these should follow the relevant data reference syntax",
+    "output_path_template":    "<mip_era><activity_id><institution_id><source_id><experiment_id><_member_id><table><variable_id><grid_label><version>",
+    "output_file_template":    "<variable_id><table><source_id><experiment_id><_member_id><grid_label>"
+}

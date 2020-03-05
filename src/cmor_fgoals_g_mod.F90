@@ -79,14 +79,19 @@ module cmor_fgoals_g_mod
 
   type model_info_type
     character(50) :: time_units = 'N/A'
+    ! Frequency table
     integer table_id
     integer axis_ids(12) ! See axis indices for ordering.
     type(axis_bundle_type) axes_time  ! Axes with time axis
     type(axis_bundle_type) axes_time1 ! Axes with time1 axis
     type(axis_bundle_type) axes_time2 ! Axes with time2 axis
-    ! Variables
     integer num_var
     type(var_info_type), allocatable :: var_info(:)
+    ! Fix table
+    integer fix_table_id
+    integer fix_axis_ids(12) ! See axis indices for ordering.
+    integer num_fix_var
+    type(var_info_type), allocatable :: fix_var_info(:)
   contains
     procedure :: init => model_info_init
     procedure :: create_gamil_cmor_objects => model_info_create_gamil_cmor_objects
@@ -231,6 +236,27 @@ contains
 
     call gamil%create_gamil_cmor_objects(frequency)
 
+    ! Fix fields
+    file_prefix = trim(experiment_path) // '/' // trim(case_id) // '.gamil.h0.'
+    file_path = trim(file_prefix) // start_time%format(time_format) // '.nc'
+    call gamil_reader_open(file_path)
+    do ivar = 1, gamil%num_fix_var
+      if (gamil%fix_var_info(ivar)%model_var_name == 'XXX') cycle ! Skip the incomplete variable.
+      if (.not. all(selected_vars == '') .and. .not. any(selected_vars == gamil%fix_var_info(ivar)%table_var_name)) cycle
+      call log_notice('Convert variable ' // trim(gamil%fix_var_info(ivar)%table_var_name) // ' ...')
+          ierr = cmor_close(gamil%var_info(ivar)%var_id, preserve=1)
+      select case (size(gamil%fix_var_info(ivar)%dims))
+      case (2) ! 2D variable
+        call gamil_reader_get_var(gamil%fix_var_info(ivar)%model_var_name, array_2d, time_step=1)
+        ierr = cmor_write(                        &
+          var_id=gamil%fix_var_info(ivar)%var_id, &
+          data=array_2d)
+      end select
+      ierr = cmor_close(gamil%fix_var_info(ivar)%var_id)
+    end do
+    call gamil_reader_close()
+
+    ! Variable fields
     select case (frequency)
     case ('Amon')
       dt = timedelta(months=1)
@@ -425,12 +451,20 @@ contains
     character(*)          , intent(in   ) :: model_json_file_path
 
     type(json_core) json
+    ! Variable fields
     type(json_file) f_table
     type(json_value), pointer :: table_var_entry
     type(json_value), pointer :: table_var
     type(json_file) f_model
     type(json_value), pointer :: model_var_entry
     type(json_value), pointer :: model_var
+    ! Fix fields
+    type(json_file) f_fix_table
+    type(json_value), pointer :: fix_table_var_entry
+    type(json_value), pointer :: fix_table_var
+    type(json_file) f_fix_model
+    type(json_value), pointer :: fix_model_var_entry
+    type(json_value), pointer :: fix_model_var
     logical found
     integer ivar, idim, num_dim
     character(kind=json_CK, len=:), allocatable :: str
@@ -503,6 +537,61 @@ contains
         write(*, *) this%var_info(ivar)%dims
       else
         write(*, '("* ", A8, " -> ", A8, " ", A)') this%var_info(ivar)%model_var_name, this%var_info(ivar)%table_var_name, &
+          'CHECK MODEL DATA PLEASE!'
+      end if
+    end do
+
+    ! NOTE: Here we open TWO json files.
+    ! Load table json file to inquire information.
+    call f_fix_table%load_file(filename=trim(table_root) // '/CMIP6_fx.json')
+    call f_fix_table%get('variable_entry', fix_table_var_entry)
+    if (.not. associated(fix_table_var_entry)) then
+      call log_error('Failed to parse ' // trim(table_root) // '/CMIP6_fx.json to get variable_entry!')
+    end if
+    ! Load model json file to inquire variable mapping between CMOR and model.
+    call f_fix_model%load_file(filename=trim(project_root) // '/src/gamil_vars.fx.json')
+    call f_fix_model%get('.', fix_model_var_entry)
+    if (.not. associated(fix_model_var_entry)) then
+      call log_error('Failed to parse ' // trim(project_root) // '/src/gamil_vars.fx.json to get fix_model_var_entry!')
+    end if
+    call json%info(fix_model_var_entry, n_children=this%num_fix_var)
+    allocate(this%fix_var_info(this%num_fix_var))
+    do ivar = 1, this%num_fix_var
+      call json%get_child(fix_model_var_entry, ivar, fix_model_var)
+      call json%info(fix_model_var, name=str)
+      this%fix_var_info(ivar)%table_var_name = str
+      ! Find out the variable in CMOR table.
+      call json%get(fix_table_var_entry, this%fix_var_info(ivar)%table_var_name, fix_table_var)
+      ! Get the dimenions from CMOR table.
+      call json%get(fix_table_var, 'dimensions', str)
+      num_dim = string_count(str, ' ') + 1
+      if (allocated(this%fix_var_info(ivar)%dims)) deallocate(this%fix_var_info(ivar)%dims)
+      allocate(this%fix_var_info(ivar)%dims(num_dim))
+      do idim = 1, num_dim
+        this%fix_var_info(ivar)%dims(idim) = string_split(str, idim, ' ')
+      end do
+      call json%get(fix_model_var, 'var_name', str)
+      this%fix_var_info(ivar)%model_var_name = str
+      call json%get(fix_model_var, 'units', str)
+      this%fix_var_info(ivar)%units = str
+      call json%get(fix_model_var, 'vinterp', str, found)
+      if (found) this%fix_var_info(ivar)%vinterp = str
+      call json%get(fix_model_var, 'positive', str, found)
+      if (found) this%fix_var_info(ivar)%positive = str
+      if (this%fix_var_info(ivar)%model_var_name /= 'XXX') then
+        write(*, '("* ", A8, " -> ", A8)', advance='no') this%fix_var_info(ivar)%model_var_name, this%fix_var_info(ivar)%table_var_name
+        write(*, '(A10)', advance='no') this%fix_var_info(ivar)%units
+        select case (this%fix_var_info(ivar)%positive)
+        case ('up')
+          write(*, '(A)', advance='no') '↑'
+        case ('down')
+          write(*, '(A)', advance='no') '↓'
+        case default
+          write(*, '(A)', advance='no') ' '
+        end select
+        write(*, *) this%fix_var_info(ivar)%dims
+      else
+        write(*, '("* ", A8, " -> ", A8, " ", A)') this%fix_var_info(ivar)%model_var_name, this%fix_var_info(ivar)%table_var_name, &
           'CHECK MODEL DATA PLEASE!'
       end if
     end do
@@ -897,7 +986,40 @@ contains
             positive=this%var_info(i)%positive)
         end if
       case default
-        call log_error('Internal error!')
+        call log_error('Internal error!', __FILE__, __LINE__)
+      end select
+    end do
+
+    this%fix_table_id = cmor_load_table(trim(table_root) // '/CMIP6_fx.json')
+    call log_notice('Load table CMIP6_fx.json.')
+
+    call cmor_set_table(this%fix_table_id)
+
+    ! Longitude axis
+    this%fix_axis_ids(lon_axis_idx) = cmor_axis( &
+      table_entry='longitude'                  , &
+      length=size(gamil_lon)                   , &
+      units='degrees_east'                     , &
+      coord_vals=gamil_lon                     , &
+      cell_bounds=gamil_lon_bnds)
+
+    ! Latitude axis
+    this%fix_axis_ids(lat_axis_idx) = cmor_axis( &
+      table_entry='latitude'                   , &
+      length=size(gamil_lat)                   , &
+      units='degrees_north'                    , &
+      coord_vals=gamil_lat                     , &
+      cell_bounds=gamil_lat_bnds)
+
+    do i = 1, this%num_fix_var
+      select case (size(this%fix_var_info(i)%dims))
+      case (2) ! 2D variable
+        this%fix_var_info(i)%var_id = cmor_variable(       &
+          table_entry=this%fix_var_info(i)%table_var_name, &
+          units=this%fix_var_info(i)%units               , &
+          axis_ids=[this%fix_axis_ids(lon_axis_idx),this%fix_axis_ids(lat_axis_idx)])
+      case default
+        call log_error('Internal error!', __FILE__, __LINE__)
       end select
     end do
 
@@ -908,6 +1030,7 @@ contains
     class(model_info_type), intent(inout) :: this
 
     if (allocated(this%var_info)) deallocate(this%var_info)
+    if (allocated(this%fix_var_info)) deallocate(this%fix_var_info)
 
   end subroutine model_info_clear
 
