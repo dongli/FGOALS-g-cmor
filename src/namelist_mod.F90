@@ -45,8 +45,13 @@ contains
 
     character(*), intent(in) :: file_path
 
+    logical flag
     integer i
 
+    inquire(file=file_path, exist=flag)
+    if (.not. flag) then
+      call log_error('Namelist file ' // trim(file_path) // ' does not exist!')
+    end if
     open(10, file=file_path, status='old')
     read(10, nml=cmor_fgoals_g)
     close(10)

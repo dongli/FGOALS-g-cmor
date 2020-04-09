@@ -236,25 +236,27 @@ contains
 
     call gamil%create_gamil_cmor_objects(frequency)
 
-    ! Fix fields
-    file_prefix = trim(experiment_path) // '/' // trim(case_id) // '.gamil.h0.'
-    file_path = trim(file_prefix) // start_time%format(time_format) // '.nc'
-    call gamil_reader_open(file_path)
-    do ivar = 1, gamil%num_fix_var
-      if (gamil%fix_var_info(ivar)%model_var_name == 'XXX') cycle ! Skip the incomplete variable.
-      if (.not. all(selected_vars == '') .and. .not. any(selected_vars == gamil%fix_var_info(ivar)%table_var_name)) cycle
-      call log_notice('Convert variable ' // trim(gamil%fix_var_info(ivar)%table_var_name) // ' ...')
-          ierr = cmor_close(gamil%var_info(ivar)%var_id, preserve=1)
-      select case (size(gamil%fix_var_info(ivar)%dims))
-      case (2) ! 2D variable
-        call gamil_reader_get_var(gamil%fix_var_info(ivar)%model_var_name, array_2d, time_step=1)
-        ierr = cmor_write(                        &
-          var_id=gamil%fix_var_info(ivar)%var_id, &
-          data=array_2d)
-      end select
-      ierr = cmor_close(gamil%fix_var_info(ivar)%var_id)
-    end do
-    call gamil_reader_close()
+    ! Fix fields (Only with Amon output)
+    if (frequency == 'Amon') then
+      file_prefix = trim(experiment_path) // '/' // trim(case_id) // '.gamil.h0.'
+      file_path = trim(file_prefix) // start_time%format(time_format) // '.nc'
+      call gamil_reader_open(file_path)
+      do ivar = 1, gamil%num_fix_var
+        if (gamil%fix_var_info(ivar)%model_var_name == 'XXX') cycle ! Skip the incomplete variable.
+        if (.not. all(selected_vars == '') .and. .not. any(selected_vars == gamil%fix_var_info(ivar)%table_var_name)) cycle
+        call log_notice('Convert variable ' // trim(gamil%fix_var_info(ivar)%table_var_name) // ' ...')
+            ierr = cmor_close(gamil%var_info(ivar)%var_id, preserve=1)
+        select case (size(gamil%fix_var_info(ivar)%dims))
+        case (2) ! 2D variable
+          call gamil_reader_get_var(gamil%fix_var_info(ivar)%model_var_name, array_2d, time_step=1)
+          ierr = cmor_write(                        &
+            var_id=gamil%fix_var_info(ivar)%var_id, &
+            data=array_2d)
+        end select
+        ierr = cmor_close(gamil%fix_var_info(ivar)%var_id)
+      end do
+      call gamil_reader_close()
+    end if
 
     ! Variable fields
     select case (frequency)
