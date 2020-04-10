@@ -37,14 +37,14 @@ else ()
   message(FATAL_ERROR "Unable to find UDUNITS library!")
 endif ()
 
-if (DEFINED ENV{UUID} AND (NOT DEFINED ENV{UUID_ROOT}))
-  set(ENV{UUID_ROOT} $ENV{UUID})
+if (DEFINED ENV{LIBUUID} AND (NOT DEFINED ENV{LIBUUID_ROOT}))
+  set(ENV{LIBUUID_ROOT} $ENV{LIBUUID})
 endif ()
-if (DEFINED ENV{UUID_ROOT})
-  include_directories("$ENV{UUID_ROOT}/include")
-  link_directories("$ENV{UUID_ROOT}/lib")
+if (DEFINED ENV{LIBUUID_ROOT})
+  include_directories("$ENV{LIBUUID_ROOT}/include")
+  link_directories("$ENV{LIBUUID_ROOT}/lib")
 else ()
-  message(FATAL_ERROR "Unable to find UUID library!")
+  message(FATAL_ERROR "Unable to find LIBUUID library!")
 endif ()
 
 if (DEFINED ENV{CMOR} AND (NOT DEFINED ENV{CMOR_ROOT}))
@@ -82,6 +82,7 @@ add_subdirectory(lib/container)
 add_subdirectory(lib/fiona)
 add_subdirectory(lib/flogger)
 add_subdirectory(lib/datetime)
+add_subdirectory(lib/string)
 
 set(source_files
   src/const_mod.F90
@@ -94,4 +95,4 @@ set(source_files
 )
 
 add_executable(convert_fgoals_g.exe ${source_files})
-target_link_libraries(convert_fgoals_g.exe fortran_datetime flogger fiona jsonfortran netcdf netcdff udunits2 uuid json-c cmor)
+target_link_libraries(convert_fgoals_g.exe fortran_datetime fortran_string flogger fiona jsonfortran netcdf netcdff udunits2 uuid json-c cmor)

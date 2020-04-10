@@ -16,3 +16,6 @@
 [submodule "lib/datetime"]
 	path = lib/datetime
 	url = https://github.com/dongli/fortran-datetime
+[submodule "lib/string"]
+	path = lib/string
+	url = https://github.com/dongli/fortran-string

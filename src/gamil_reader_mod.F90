@@ -62,11 +62,11 @@ contains
 
     character(*), intent(in) :: file_path
 
-    call io_create_dataset('gamil', file_path=file_path, mode='input', mute=.true.)
-    call io_get_dim('gamil', 'lon', size=num_lon)
-    call io_get_dim('gamil', 'lat', size=num_lat)
-    call io_get_dim('gamil', 'lev', size=num_lev)
-    call io_start_input('gamil')
+    call fiona_open_dataset('gamil', file_path=file_path)
+    call fiona_get_dim('gamil', 'lon', size=num_lon)
+    call fiona_get_dim('gamil', 'lat', size=num_lat)
+    call fiona_get_dim('gamil', 'lev', size=num_lev)
+    call fiona_start_input('gamil')
 
     if (.not. allocated(lon     )) allocate(lon     (num_lon                  ))
     if (.not. allocated(lon_bnds)) allocate(lon_bnds(num_lon+1                ))
@@ -86,7 +86,7 @@ contains
 
     character(*), intent(in) :: var_name
 
-    res = io_has_var('gamil', var_name)
+    res = fiona_has_var('gamil', var_name)
 
   end function gamil_reader_has_var
 
@@ -95,10 +95,10 @@ contains
     real(8) dlon
     integer i
 
-    call io_input('gamil', 'lon', lon)
-    call io_input('gamil', 'lat', lat)
-    call io_input('gamil', 'lev', lev)
-    call io_input('gamil', 'ilev', lev_bnds)
+    call fiona_input('gamil', 'lon', lon)
+    call fiona_input('gamil', 'lat', lat)
+    call fiona_input('gamil', 'lev', lev)
+    call fiona_input('gamil', 'ilev', lev_bnds)
 
     dlon = lon(2) - lon(1)
     do i = 1, num_lon
@@ -116,7 +116,7 @@ contains
     real(8)     , intent(  out) :: value
     integer     , intent(in   ) :: time_step
 
-    call io_input('gamil', var_name, value, time_step=time_step)
+    call fiona_input('gamil', var_name, value, time_step=time_step)
 
   end subroutine gamil_reader_get_var_0d
 
@@ -126,7 +126,7 @@ contains
     real(8)     , intent(  out) :: array(:)
     integer     , intent(in   ) :: time_step
 
-    call io_input('gamil', var_name, array, time_step=time_step)
+    call fiona_input('gamil', var_name, array, time_step=time_step)
 
   end subroutine gamil_reader_get_var_1d
 
@@ -136,17 +136,17 @@ contains
     real(8)     , intent(  out) :: array(:,:)
     integer     , intent(in   ) :: time_step
 
-    if (io_has_var('gamil', var_name)) then
-      call io_input('gamil', var_name, array, time_step=time_step)
+    if (fiona_has_var('gamil', var_name)) then
+      call fiona_input('gamil', var_name, array, time_step=time_step)
     end if
 
     select case (var_name)
     case ('PRECT', 'PRECC', 'PRECTMX')
       array = array * 1000
     case ('PRECSC+PRECSL')
-      if (io_has_var('gamil', 'PRECSC') .and. io_has_var('gamil', 'PRECSL')) then
-        call io_input('gamil', 'PRECSC', array, time_step=time_step)
-        call io_input('gamil', 'PRECSL', buf_2d, time_step=time_step)
+      if (fiona_has_var('gamil', 'PRECSC') .and. fiona_has_var('gamil', 'PRECSL')) then
+        call fiona_input('gamil', 'PRECSC', array, time_step=time_step)
+        call fiona_input('gamil', 'PRECSL', buf_2d, time_step=time_step)
         array = array + buf_2d
         array = array * 1000
       else
@@ -155,34 +155,34 @@ contains
     case ('RHREFHT')
       where (array > 1.05) array = 1.05
     case ('TGCLDLWP+TGCLDIWP')
-      if (io_has_var('gamil', 'TGCLDLWP') .and. io_has_var('gamil', 'TGCLDIWP')) then
-        call io_input('gamil', 'TGCLDLWP', array, time_step=time_step)
-        call io_input('gamil', 'TGCLDIWP', buf_2d, time_step=time_step)
+      if (fiona_has_var('gamil', 'TGCLDLWP') .and. fiona_has_var('gamil', 'TGCLDIWP')) then
+        call fiona_input('gamil', 'TGCLDLWP', array, time_step=time_step)
+        call fiona_input('gamil', 'TGCLDIWP', buf_2d, time_step=time_step)
         array = array + buf_2d
       else
         call log_warning('Variable TGCLDLWP+TGCLDIWP cannot be outputted!')
       end if
     case ('FLNS')
-      if (io_has_var('gamil', 'FLNS')) return
-      if (io_has_var('gamil', 'FLUS') .and. io_has_var('gamil', 'FLDS')) then
-        call io_input('gamil', 'FLUS', array, time_step=time_step)
-        call io_input('gamil', 'FLDS', buf_2d, time_step=time_step)
+      if (fiona_has_var('gamil', 'FLNS')) return
+      if (fiona_has_var('gamil', 'FLUS') .and. fiona_has_var('gamil', 'FLDS')) then
+        call fiona_input('gamil', 'FLUS', array, time_step=time_step)
+        call fiona_input('gamil', 'FLDS', buf_2d, time_step=time_step)
         array = array - buf_2d
       else
         call log_warning('Variable FLNS (rls) cannot be outputted!')
       end if
     case ('SOLLD+SOLSD')
-      if (io_has_var('gamil', 'SOLLD') .and. io_has_var('gamil', 'SOLSD')) then
-        call io_input('gamil', 'SOLLD', array, time_step=time_step)
-        call io_input('gamil', 'SOLSD', buf_2d, time_step=time_step)
+      if (fiona_has_var('gamil', 'SOLLD') .and. fiona_has_var('gamil', 'SOLSD')) then
+        call fiona_input('gamil', 'SOLLD', array, time_step=time_step)
+        call fiona_input('gamil', 'SOLSD', buf_2d, time_step=time_step)
         array = array + buf_2d
       else
         call log_warning('Variable SOLLD+SOLSD cannot be outputted!')
       end if
     case ('FSNT-FLNT')
-      if (io_has_var('gamil', 'FSNT') .and. io_has_var('gamil', 'FLNT')) then
-        call io_input('gamil', 'FSNT', array, time_step=time_step)
-        call io_input('gamil', 'FLNT', buf_2d, time_step=time_step)
+      if (fiona_has_var('gamil', 'FSNT') .and. fiona_has_var('gamil', 'FLNT')) then
+        call fiona_input('gamil', 'FSNT', array, time_step=time_step)
+        call fiona_input('gamil', 'FLNT', buf_2d, time_step=time_step)
         array = array - buf_2d
       else
         call log_warning('Variable FSNT-FLNT cannot be outputted!')
@@ -202,8 +202,8 @@ contains
     integer i, j
 
     if (present(plev)) then
-      call io_input('gamil', 'PS', ps, time_step=time_step)
-      call io_input('gamil', var_name, buf_3d, time_step=time_step)
+      call fiona_input('gamil', 'PS', ps, time_step=time_step)
+      call fiona_input('gamil', var_name, buf_3d, time_step=time_step)
       do j = 1, num_lat
         do i = 1, num_lon
           pfull = lev * (ps(i,j) - ptop) + ptop
@@ -215,7 +215,7 @@ contains
         end do
       end do
     else if (var_name == '<pfull>') then
-      call io_input('gamil', 'PS', ps, time_step=time_step)
+      call fiona_input('gamil', 'PS', ps, time_step=time_step)
       do j = 1, num_lat
         do i = 1, num_lon
           pfull = lev * (ps(i,j) - ptop) + ptop
@@ -223,7 +223,7 @@ contains
         end do
       end do
     else if (var_name == '<phalf>') then
-      call io_input('gamil', 'PS', ps, time_step=time_step)
+      call fiona_input('gamil', 'PS', ps, time_step=time_step)
       do j = 1, num_lat
         do i = 1, num_lon
           phalf = lev_bnds * (ps(i,j) - ptop) + ptop
@@ -231,7 +231,7 @@ contains
         end do
       end do
     else
-      call io_input('gamil', var_name, array, time_step=time_step)
+      call fiona_input('gamil', var_name, array, time_step=time_step)
     end if
 
   end subroutine gamil_reader_get_var_3d
@@ -242,13 +242,13 @@ contains
     character(*), intent(in ) :: att_name
     character(*), intent(out) :: value
 
-    call io_get_att('gamil', var_name, att_name, value)
+    call fiona_get_att('gamil', var_name, att_name, value)
 
   end subroutine gamil_reader_get_var_att_s
 
   subroutine gamil_reader_close()
 
-    call io_end_input('gamil')
+    call fiona_end_input('gamil')
 
   end subroutine gamil_reader_close
 

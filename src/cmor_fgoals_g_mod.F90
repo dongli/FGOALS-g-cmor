@@ -15,6 +15,7 @@ module cmor_fgoals_g_mod
 
   use cmor_users_functions
   use json_module
+  use string
   use flogger
   use fiona
   use datetime
@@ -128,10 +129,10 @@ contains
 
     integer ierr, i
 
-    project_root = trim(string_delete(__FILE__, 'cmor_fgoals_g_mod.F90')) // '/..'
+    project_root = trim(delete_string(__FILE__, 'cmor_fgoals_g_mod.F90')) // '/..'
     table_root = trim(project_root) // '/tables/cmip6/Tables'
 
-    call io_init()
+    call fiona_init()
 
     ierr = cmor_setup(inpath=table_root, netcdf_file_action=cmor_replace, exit_control=cmor_exit_on_warning)
     call handle_cmor_error(ierr, __FILE__, __LINE__)
@@ -473,7 +474,7 @@ contains
 
     call this%clear()
 
-    call json%initialize(comment_char=json_CK_'!')
+    call json%initialize(comment_char='!')
     ! NOTE: Here we open TWO json files.
     ! Load table json file to inquire information.
     call f_table%load_file(filename=table_json_file_path)
@@ -497,21 +498,21 @@ contains
       call json%get(table_var_entry, this%var_info(ivar)%table_var_name, table_var)
       ! Get the dimenions from CMOR table.
       call json%get(table_var, 'dimensions', str)
-      num_dim = string_count(str, ' ') + 1
+      num_dim = count_string(str, ' ') + 1
       if (allocated(this%var_info(ivar)%dims)) deallocate(this%var_info(ivar)%dims)
       allocate(this%var_info(ivar)%dims(num_dim))
       do idim = 1, num_dim
-        this%var_info(ivar)%dims(idim) = string_split(str, idim, ' ')
+        this%var_info(ivar)%dims(idim) = split_string(str, ' ', idim)
       end do
       ! Check the time cell method.
       call json%get(table_var, 'cell_methods', str)
-      if (string_count(str, 'time: mean') > 0) then
+      if (count_string(str, 'time: mean') > 0) then
         this%var_info(ivar)%time_method = 'mean'
-      else if (string_count(str, 'time: point') > 0) then
+      else if (count_string(str, 'time: point') > 0) then
         this%var_info(ivar)%time_method = 'point'
-      else if (string_count(str, 'time: maximum') > 0) then
+      else if (count_string(str, 'time: maximum') > 0) then
         this%var_info(ivar)%time_method = 'maximum'
-      else if (string_count(str, 'time: minimum') > 0) then
+      else if (count_string(str, 'time: minimum') > 0) then
         this%var_info(ivar)%time_method = 'minimum'
       else
         call log_error('Unsupported time_method ' // trim(str) // ' of ' // trim(this%var_info(ivar)%table_var_name) // '!')
@@ -566,11 +567,11 @@ contains
       call json%get(fix_table_var_entry, this%fix_var_info(ivar)%table_var_name, fix_table_var)
       ! Get the dimenions from CMOR table.
       call json%get(fix_table_var, 'dimensions', str)
-      num_dim = string_count(str, ' ') + 1
+      num_dim = count_string(str, ' ') + 1
       if (allocated(this%fix_var_info(ivar)%dims)) deallocate(this%fix_var_info(ivar)%dims)
       allocate(this%fix_var_info(ivar)%dims(num_dim))
       do idim = 1, num_dim
-        this%fix_var_info(ivar)%dims(idim) = string_split(str, idim, ' ')
+        this%fix_var_info(ivar)%dims(idim) = split_string(str, ' ', idim)
       end do
       call json%get(fix_model_var, 'var_name', str)
       this%fix_var_info(ivar)%model_var_name = str
