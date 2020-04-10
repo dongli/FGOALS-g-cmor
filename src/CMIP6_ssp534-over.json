@@ -15,8 +15,8 @@
     "#note_run_variant":      "Text stored in attribute variant_info (recommended, not required description of run variant)",
     "run_variant":            "3rd realization",
  
-    "parent_experiment_id":   "historical",
-    "parent_activity_id":     "CMIP",
+    "parent_experiment_id":   "ssp585",
+    "parent_activity_id":     "ScenarioMIP",
     "parent_source_id":       "FGOALS-g3",
     "parent_variant_label":   "r1i1p1f1",
  
